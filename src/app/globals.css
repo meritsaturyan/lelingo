@@ -1,26 +1,110 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --color-bg: #fafafa;
+  --color-navy: #062b56;
+  --color-blue: #c7e0e7;
+  --color-orange: #fd7035;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-background: var(--color-bg);
+  --color-foreground: var(--color-navy);
+  --font-sans: var(--font-nunito), var(--font-armenian), ui-sans-serif, system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-navy);
+  font-family: var(--font-sans);
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.5s ease-out both;
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+.animate-soft-pulse {
+  animation: soft-pulse 2.5s ease-in-out infinite;
+}
+
+.star-deco {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: white;
+  clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  opacity: 0.7;
+}
+
+.app-shell {
+  width: 100%;
+  max-width: 430px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  position: relative;
+}
+
+@media (min-width: 768px) {
+  .app-shell {
+    max-width: 480px;
+    box-shadow: 0 0 0 1px rgba(6, 43, 86, 0.04), 0 25px 80px rgba(6, 43, 86, 0.08);
+    border-radius: 40px;
+    overflow: hidden;
+    margin-top: 24px;
+    margin-bottom: 24px;
+    min-height: calc(100dvh - 48px);
+  }
+
+  body {
+    background: #c7e0e7;
+  }
+}
+
+@media (min-width: 1024px) {
+  .app-shell {
+    max-width: 520px;
+  }
 }
