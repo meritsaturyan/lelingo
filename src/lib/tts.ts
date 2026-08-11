@@ -27,12 +27,6 @@ export function stopSpeaking() {
   }
 }
 
-export type SpeechRecognitionResult = {
-  transcript: string;
-  supported: boolean;
-  error?: string;
-};
-
 type SpeechRecognitionInstance = {
   lang: string;
   interimResults: boolean;
@@ -41,53 +35,174 @@ type SpeechRecognitionInstance = {
   start: () => void;
   stop: () => void;
   abort: () => void;
-  onresult: ((event: { results: { [index: number]: { [index: number]: { transcript: string } }; length: number } }) => void) | null;
+  onresult:
+    | ((event: {
+        resultIndex: number;
+        results: {
+          [index: number]: {
+            [index: number]: { transcript: string };
+            isFinal: boolean;
+            length: number;
+          };
+          length: number;
+        };
+      }) => void)
+    | null;
   onerror: ((event: { error: string }) => void) | null;
   onend: (() => void) | null;
+  onstart: (() => void) | null;
 };
 
-export function getSpeechRecognition(): SpeechRecognitionInstance | null {
+function getSpeechRecognitionCtor(): (new () => SpeechRecognitionInstance) | null {
   if (typeof window === "undefined") return null;
   const w = window as unknown as {
     SpeechRecognition?: new () => SpeechRecognitionInstance;
     webkitSpeechRecognition?: new () => SpeechRecognitionInstance;
   };
-  const Ctor = w.SpeechRecognition || w.webkitSpeechRecognition;
-  if (!Ctor) return null;
-  return new Ctor();
+  return w.SpeechRecognition || w.webkitSpeechRecognition || null;
 }
 
+export function isSpeechRecognitionSupported(): boolean {
+  return !!getSpeechRecognitionCtor();
+}
+
+export type ListenController = {
+  stop: () => void;
+  supported: boolean;
+};
+
+/**
+ * Robust French speech recognition.
+ * Chrome often ends sessions after a pause — we auto-restart while active.
+ */
 export function startListeningFrench(
-  onResult: (transcript: string) => void,
-  onError?: (error: string) => void
-): { stop: () => void; supported: boolean } {
-  const recognition = getSpeechRecognition();
-  if (!recognition) {
+  onPartial: (transcript: string) => void,
+  onError?: (error: string) => void,
+  onStatus?: (listening: boolean) => void
+): ListenController {
+  const Ctor = getSpeechRecognitionCtor();
+  if (!Ctor) {
     onError?.("unsupported");
     return { stop: () => {}, supported: false };
   }
 
-  recognition.lang = "fr-FR";
-  recognition.interimResults = false;
-  recognition.continuous = false;
-  recognition.maxAlternatives = 1;
+  // Mic + TTS conflict — stop any speech synthesis first
+  stopSpeaking();
 
-  recognition.onresult = (event) => {
-    const transcript = event.results[0]?.[0]?.transcript ?? "";
-    onResult(transcript);
-  };
-  recognition.onerror = (event) => {
-    onError?.(event.error);
+  let active = true;
+  let recognition: SpeechRecognitionInstance | null = null;
+  let finalText = "";
+  let restartTimer: ReturnType<typeof setTimeout> | null = null;
+
+  const clearRestart = () => {
+    if (restartTimer) {
+      clearTimeout(restartTimer);
+      restartTimer = null;
+    }
   };
 
-  recognition.start();
+  const emit = (interim = "") => {
+    const combined = `${finalText} ${interim}`.replace(/\s+/g, " ").trim();
+    onPartial(combined);
+  };
+
+  const create = () => {
+    const rec = new Ctor();
+    rec.lang = "fr-FR";
+    rec.interimResults = true;
+    rec.continuous = true;
+    rec.maxAlternatives = 1;
+
+    rec.onstart = () => {
+      if (active) onStatus?.(true);
+    };
+
+    rec.onresult = (event) => {
+      let interim = "";
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const result = event.results[i];
+        const piece = result[0]?.transcript ?? "";
+        if (result.isFinal) {
+          finalText = `${finalText} ${piece}`.replace(/\s+/g, " ").trim();
+        } else {
+          interim += piece;
+        }
+      }
+      emit(interim);
+    };
+
+    rec.onerror = (event) => {
+      // Benign / recoverable — keep listening
+      if (
+        event.error === "no-speech" ||
+        event.error === "aborted" ||
+        event.error === "audio-capture"
+      ) {
+        return;
+      }
+      if (event.error === "not-allowed") {
+        active = false;
+        onStatus?.(false);
+        onError?.("not-allowed");
+        return;
+      }
+      if (event.error === "network") {
+        // Try restart; some browsers throw network spuriously
+        return;
+      }
+      onError?.(event.error);
+    };
+
+    rec.onend = () => {
+      if (!active) {
+        onStatus?.(false);
+        return;
+      }
+      // Chrome ends recognition after silence — restart automatically
+      clearRestart();
+      restartTimer = setTimeout(() => {
+        if (!active) return;
+        try {
+          createAndStart();
+        } catch {
+          onStatus?.(false);
+          onError?.("restart-failed");
+        }
+      }, 250);
+    };
+
+    recognition = rec;
+    return rec;
+  };
+
+  const createAndStart = () => {
+    const rec = create();
+    try {
+      rec.start();
+    } catch {
+      // InvalidStateError if already started — ignore
+    }
+  };
+
+  createAndStart();
+
   return {
     supported: true,
     stop: () => {
+      active = false;
+      clearRestart();
+      onStatus?.(false);
       try {
-        recognition.stop();
+        if (recognition) {
+          recognition.onend = null;
+          recognition.abort();
+        }
       } catch {
-        /* ignore */
+        try {
+          recognition?.stop();
+        } catch {
+          /* ignore */
+        }
       }
     },
   };

@@ -2,7 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import type { SpeakingPrompt } from "@/lib/types";
-import { startListeningFrench } from "@/lib/tts";
+import {
+  isSpeechRecognitionSupported,
+  startListeningFrench,
+  stopSpeaking,
+  type ListenController,
+} from "@/lib/tts";
 import { evaluateSpeaking } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -18,37 +23,101 @@ export function SpeakingExercise({
   const [listening, setListening] = useState(false);
   const [transcript, setTranscript] = useState("");
   const [supported, setSupported] = useState(true);
+  const [micError, setMicError] = useState<string | null>(null);
   const [result, setResult] = useState<ReturnType<typeof evaluateSpeaking> | null>(
     null
   );
-  const stopRef = useRef<(() => void) | null>(null);
+  const controllerRef = useRef<ListenController | null>(null);
 
   useEffect(() => {
-    return () => stopRef.current?.();
+    setSupported(isSpeechRecognitionSupported());
+    return () => {
+      controllerRef.current?.stop();
+      controllerRef.current = null;
+    };
   }, []);
 
-  const start = () => {
-    setResult(null);
+  // Reset when prompt changes
+  useEffect(() => {
+    controllerRef.current?.stop();
+    controllerRef.current = null;
+    setListening(false);
     setTranscript("");
-    setListening(true);
-    const { stop, supported: ok } = startListeningFrench(
-      (text) => {
-        setTranscript(text);
-        setListening(false);
-      },
-      (err) => {
-        setListening(false);
-        if (err === "unsupported") setSupported(false);
+    setResult(null);
+    setMicError(null);
+  }, [prompt.id]);
+
+  const stop = () => {
+    controllerRef.current?.stop();
+    controllerRef.current = null;
+    setListening(false);
+  };
+
+  const start = async () => {
+    setResult(null);
+    setMicError(null);
+    stopSpeaking();
+
+    // Prefer secure context (needed on deployed HTTPS; localhost is fine)
+    if (typeof window !== "undefined" && !window.isSecureContext) {
+      setMicError(
+        "Միկրոֆոնը աշխատում է միայն HTTPS կամ localhost միջավայրում։"
+      );
+      setSupported(false);
+      return;
+    }
+
+    // Ask for permission first so Chrome doesn't kill recognition immediately
+    try {
+      if (navigator.mediaDevices?.getUserMedia) {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((t) => t.stop());
       }
+    } catch {
+      setMicError(
+        "Միկրոֆոնի թույլտվությունը մերժված է։ Թույլատրե՛ք միկրոֆոնը բրաուզերի կարգավորումներում։"
+      );
+      setListening(false);
+      return;
+    }
+
+    controllerRef.current?.stop();
+    setListening(true);
+
+    const controller = startListeningFrench(
+      (text) => setTranscript(text),
+      (err) => {
+        if (err === "unsupported") {
+          setSupported(false);
+          setListening(false);
+          setMicError(
+            "Ձեր բրաուզերը չի աջակցում Speech-to-Text։ Փորձե՛ք Chrome կամ Edge։"
+          );
+        } else if (err === "not-allowed") {
+          setListening(false);
+          setMicError("Միկրոֆոնի թույլտվությունը մերժված է։");
+        } else if (err === "restart-failed") {
+          setListening(false);
+          setMicError("Լսումը ընդհատվեց։ Կրկին սեղմե՛ք «Խոսել»։");
+        }
+      },
+      (isOn) => setListening(isOn)
     );
-    stopRef.current = stop;
-    if (!ok) {
+
+    controllerRef.current = controller;
+    if (!controller.supported) {
       setSupported(false);
       setListening(false);
     }
   };
 
+  const toggle = () => {
+    if (listening) stop();
+    else void start();
+  };
+
   const evaluate = (text: string) => {
+    stop();
     const r = evaluateSpeaking(text, prompt.expectedKeywords);
     setResult(r);
     onComplete?.(r.total);
@@ -70,21 +139,31 @@ export function SpeakingExercise({
         💡 {prompt.tipsHy}
       </p>
 
-      {!supported && (
+      {(!supported || micError) && (
         <div className="rounded-2xl bg-[#FD7035]/15 p-4 text-sm text-[#062B56]">
-          Ձեր բրաուզերը չի աջակցում Speech-to-Text։ Կարող եք պատասխանը գրել ստորև։
+          {micError ||
+            "Ձեր բրաուզերը չի աջակցում Speech-to-Text։ Կարող եք պատասխանը գրել ստորև։"}
         </div>
       )}
 
       <div className="flex gap-3">
         <Button
-          onClick={listening ? () => stopRef.current?.() : start}
+          onClick={toggle}
           variant={listening ? "navy" : "primary"}
           className="flex-1"
         >
-          {listening ? "⏺ Լսում է…" : "🎤 Խոսել"}
+          {listening ? "⏹ Կանգնեցնել" : "🎤 Խոսել"}
         </Button>
       </div>
+
+      {listening && (
+        <div className="flex items-center justify-center gap-2 rounded-2xl bg-[#C7E0E7] py-3">
+          <span className="h-2.5 w-2.5 rounded-full bg-[#FD7035] animate-soft-pulse" />
+          <p className="text-sm font-semibold text-[#062B56]">
+            Լսում է… խոսե՛ք ֆրանսերեն
+          </p>
+        </div>
+      )}
 
       <textarea
         value={transcript}
@@ -118,7 +197,10 @@ export function SpeakingExercise({
               ["Սահունություն", result.fluency],
               ["Լրիվություն", result.completeness],
             ].map(([label, score]) => (
-              <div key={label as string} className="rounded-2xl bg-[#FAFAFA] p-3 text-center">
+              <div
+                key={label as string}
+                className="rounded-2xl bg-[#FAFAFA] p-3 text-center"
+              >
                 <p className="text-xs text-[#062B56]/50">{label}</p>
                 <p className="font-bold text-[#062B56]">{score as number}/10</p>
               </div>
