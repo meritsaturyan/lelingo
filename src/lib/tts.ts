@@ -65,6 +65,7 @@ type SpeechRecognitionInstance = {
   onerror: ((event: { error: string }) => void) | null;
   onend: (() => void) | null;
   onstart: (() => void) | null;
+  onspeechend: (() => void) | null;
 };
 
 function getSpeechRecognitionCtor(): (new () => SpeechRecognitionInstance) | null {
@@ -86,9 +87,9 @@ export type ListenController = {
 };
 
 /**
- * French speech recognition.
- * Mobile: single-utterance mode (no restart loops — those freeze phones).
- * Desktop: light continuous mode with limited restarts.
+ * Mobile Chrome often ends with no-speech immediately.
+ * We keep a gentle restart loop until the user stops, we get speech,
+ * or the session timeout hits — without the aggressive loop that froze phones.
  */
 export function startListeningFrench(
   onPartial: (transcript: string) => void,
@@ -107,16 +108,19 @@ export function startListeningFrench(
   let active = true;
   let recognition: SpeechRecognitionInstance | null = null;
   let finalText = "";
-  let gotResult = false;
-  let restartCount = 0;
+  let gotFinal = false;
+  let silenceRestarts = 0;
   let restartTimer: ReturnType<typeof setTimeout> | null = null;
   let safetyTimer: ReturnType<typeof setTimeout> | null = null;
   let emitTimer: ReturnType<typeof setTimeout> | null = null;
   let pendingEmit = "";
+  let starting = false;
 
-  const MAX_DESKTOP_RESTARTS = 2;
-  const MOBILE_MAX_MS = 10000;
-  const DESKTOP_MAX_MS = 25000;
+  // Mobile: allow more silence-retries (Chrome ends early), but slow restarts
+  const MAX_SILENCE_RESTARTS = mobile ? 12 : 4;
+  const RESTART_DELAY_MS = mobile ? 450 : 500;
+  const SESSION_MS = mobile ? 20000 : 30000;
+  const IDLE_FINISH_AFTER_FINAL_MS = mobile ? 1800 : 1200;
 
   const clearTimers = () => {
     if (restartTimer) {
@@ -134,20 +138,23 @@ export function startListeningFrench(
   };
 
   const finish = () => {
-    if (!active) return;
+    if (!active && !recognition) return;
     active = false;
     clearTimers();
     onStatus?.(false);
+    const rec = recognition;
+    recognition = null;
+    if (!rec) return;
     try {
-      if (recognition) {
-        recognition.onend = null;
-        recognition.onerror = null;
-        recognition.onresult = null;
-        recognition.stop();
-      }
+      rec.onend = null;
+      rec.onerror = null;
+      rec.onresult = null;
+      rec.onstart = null;
+      rec.onspeechend = null;
+      rec.stop();
     } catch {
       try {
-        recognition?.abort();
+        rec.abort();
       } catch {
         /* ignore */
       }
@@ -156,59 +163,110 @@ export function startListeningFrench(
 
   const scheduleEmit = (text: string) => {
     pendingEmit = text;
-    // Throttle React updates — prevents UI freeze on phones
     if (emitTimer) return;
-    emitTimer = setTimeout(() => {
-      emitTimer = null;
-      onPartial(pendingEmit);
-    }, mobile ? 120 : 40);
+    emitTimer = setTimeout(
+      () => {
+        emitTimer = null;
+        if (pendingEmit) onPartial(pendingEmit);
+      },
+      mobile ? 150 : 50
+    );
   };
 
   const emit = (interim = "") => {
-    const combined = `${finalText} ${interim}`.replace(/\s+/g, " ").trim();
-    scheduleEmit(combined);
+    scheduleEmit(`${finalText} ${interim}`.replace(/\s+/g, " ").trim());
   };
 
-  const create = () => {
+  const scheduleRestart = () => {
+    if (!active) return;
+    if (restartTimer) return;
+
+    // After a final result, wait a bit then finish (user said something)
+    if (gotFinal) {
+      restartTimer = setTimeout(() => {
+        restartTimer = null;
+        if (active) finish();
+      }, IDLE_FINISH_AFTER_FINAL_MS);
+      return;
+    }
+
+    if (silenceRestarts >= MAX_SILENCE_RESTARTS) {
+      finish();
+      if (!finalText) onError?.("no-speech-timeout");
+      return;
+    }
+
+    silenceRestarts += 1;
+    restartTimer = setTimeout(() => {
+      restartTimer = null;
+      if (!active) return;
+      startRecognition();
+    }, RESTART_DELAY_MS);
+  };
+
+  const startRecognition = () => {
+    if (!active || starting) return;
+    starting = true;
+
+    // Dispose previous instance cleanly before creating a new one
+    if (recognition) {
+      const old = recognition;
+      recognition = null;
+      try {
+        old.onend = null;
+        old.onerror = null;
+        old.onresult = null;
+        old.onstart = null;
+        old.stop();
+      } catch {
+        /* ignore */
+      }
+    }
+
     const rec = new Ctor();
+    recognition = rec;
     rec.lang = "fr-FR";
-    // Mobile: one shot. Continuous + auto-restart freezes many phones.
-    rec.continuous = !mobile;
-    rec.interimResults = !mobile;
+    // continuous=true keeps the session open longer on Android Chrome
+    rec.continuous = true;
+    rec.interimResults = true;
     rec.maxAlternatives = 1;
 
     rec.onstart = () => {
+      starting = false;
       if (active) onStatus?.(true);
     };
 
     rec.onresult = (event) => {
       if (!active) return;
+      // Got speech — reset silence counter
+      silenceRestarts = 0;
       let interim = "";
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i];
         const piece = result[0]?.transcript ?? "";
         if (result.isFinal) {
-          gotResult = true;
+          gotFinal = true;
           finalText = `${finalText} ${piece}`.replace(/\s+/g, " ").trim();
         } else {
           interim += piece;
         }
       }
       emit(interim);
-
-      // On mobile, end after the first final phrase — avoids freeze loops
-      if (mobile && gotResult) {
-        onPartial(finalText);
-        finish();
-      }
     };
 
     rec.onerror = (event) => {
+      starting = false;
       if (!active) return;
 
-      if (event.error === "aborted" || event.error === "no-speech") {
+      // These are normal on mobile — recognition will fire onend next
+      if (
+        event.error === "no-speech" ||
+        event.error === "aborted" ||
+        event.error === "network"
+      ) {
         return;
       }
+
       if (event.error === "not-allowed" || event.error === "service-not-allowed") {
         active = false;
         clearTimers();
@@ -216,6 +274,7 @@ export function startListeningFrench(
         onError?.("not-allowed");
         return;
       }
+
       if (event.error === "audio-capture") {
         active = false;
         clearTimers();
@@ -223,68 +282,33 @@ export function startListeningFrench(
         onError?.("audio-capture");
         return;
       }
-      // network / other — stop cleanly on mobile instead of looping
-      if (mobile) {
-        finish();
-        if (!gotResult) onError?.("mobile-failed");
-        return;
-      }
     };
 
     rec.onend = () => {
+      starting = false;
       if (!active) {
         onStatus?.(false);
         return;
       }
-
-      // Mobile: never restart — one session only
-      if (mobile) {
-        finish();
-        return;
-      }
-
-      // Desktop: limited gentle restarts only if we got nothing yet
-      if (gotResult || restartCount >= MAX_DESKTOP_RESTARTS) {
-        finish();
-        return;
-      }
-
-      restartCount += 1;
-      clearTimers();
-      restartTimer = setTimeout(() => {
-        if (!active) return;
-        try {
-          createAndStart();
-        } catch {
-          finish();
-        }
-      }, 600);
+      // Keep listening via gentle restart — do NOT finish on first onend
+      scheduleRestart();
     };
 
-    recognition = rec;
-    return rec;
-  };
-
-  const createAndStart = () => {
-    const rec = create();
     try {
       rec.start();
     } catch {
-      finish();
-      onError?.("start-failed");
+      starting = false;
+      // InvalidStateError — try again shortly
+      scheduleRestart();
     }
   };
 
-  createAndStart();
+  onStatus?.(true);
+  startRecognition();
 
-  // Hard safety timeout so the mic never stays open forever
-  safetyTimer = setTimeout(
-    () => {
-      if (!active) return;
-      finish();
-    },
-    mobile ? MOBILE_MAX_MS : DESKTOP_MAX_MS
-  );
+  safetyTimer = setTimeout(() => {
+    if (active) finish();
+  }, SESSION_MS);
 
   return {
     supported: true,

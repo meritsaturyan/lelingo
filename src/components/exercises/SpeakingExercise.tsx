@@ -107,9 +107,13 @@ export function SpeakingExercise({
           setMicError(
             "Միկրոֆոնը հասանելի չէ։ Փակե՛ք այլ հավելվածները, որոնք օգտագործում են միկրոֆոնը։"
           );
-        } else if (err === "mobile-failed" || err === "start-failed") {
+        } else if (
+          err === "mobile-failed" ||
+          err === "start-failed" ||
+          err === "no-speech-timeout"
+        ) {
           setMicError(
-            "Խոսքի ճանաչումը չհաջողվեց։ Կրկին սեղմե՛ք կամ գրե՛ք պատասխանը։"
+            "Ձայն չի լսվել։ Կրկին սեղմե՛ք «Խոսել» և խոսե՛ք ավելի բարձր, կամ գրե՛ք պատասխանը։"
           );
         }
       },
@@ -156,7 +160,8 @@ export function SpeakingExercise({
         {isMobile && (
           <>
             <br />
-            Հեռախոսում՝ սեղմե՛ք «Խոսել», ասե՛ք մեկ նախադասություն, ապա սպասե՛ք։
+            Հեռախոսում՝ սեղմե՛ք «Խոսել», թույլատրե՛ք միկրոֆոնը, ապա անմիջապես խոսե՛ք։
+            Կանգնեցնելու համար սեղմե՛ք «Կանգնեցնել»։
           </>
         )}
       </p>
@@ -184,7 +189,7 @@ export function SpeakingExercise({
           <span className="h-2.5 w-2.5 rounded-full bg-[#FD7035] animate-soft-pulse" />
           <p className="text-sm font-semibold text-[#062B56]">
             {isMobile
-              ? "Լսում է… ասե՛ք մեկ նախադասություն"
+              ? "Լսում է… խոսե՛ք հիմա (մինչև 20 վրկ)"
               : "Լսում է… խոսե՛ք ֆրանսերեն"}
           </p>
         </div>
