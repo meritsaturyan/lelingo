@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { SpeakingPrompt } from "@/lib/types";
 import {
+  isMobileDevice,
   isSpeechRecognitionSupported,
   startListeningFrench,
   stopSpeaking,
@@ -24,23 +25,26 @@ export function SpeakingExercise({
   const [transcript, setTranscript] = useState("");
   const [supported, setSupported] = useState(true);
   const [micError, setMicError] = useState<string | null>(null);
+  const [isMobile, setIsMobile] = useState(false);
   const [result, setResult] = useState<ReturnType<typeof evaluateSpeaking> | null>(
     null
   );
   const controllerRef = useRef<ListenController | null>(null);
+  const startingRef = useRef(false);
 
   useEffect(() => {
     setSupported(isSpeechRecognitionSupported());
+    setIsMobile(isMobileDevice());
     return () => {
       controllerRef.current?.stop();
       controllerRef.current = null;
     };
   }, []);
 
-  // Reset when prompt changes
   useEffect(() => {
     controllerRef.current?.stop();
     controllerRef.current = null;
+    startingRef.current = false;
     setListening(false);
     setTranscript("");
     setResult(null);
@@ -50,70 +54,82 @@ export function SpeakingExercise({
   const stop = () => {
     controllerRef.current?.stop();
     controllerRef.current = null;
+    startingRef.current = false;
     setListening(false);
   };
 
-  const start = async () => {
+  const start = () => {
+    if (startingRef.current || listening) return;
+    startingRef.current = true;
+
     setResult(null);
     setMicError(null);
     stopSpeaking();
 
-    // Prefer secure context (needed on deployed HTTPS; localhost is fine)
     if (typeof window !== "undefined" && !window.isSecureContext) {
       setMicError(
         "Միկրոֆոնը աշխատում է միայն HTTPS կամ localhost միջավայրում։"
       );
       setSupported(false);
+      startingRef.current = false;
       return;
     }
 
-    // Ask for permission first so Chrome doesn't kill recognition immediately
-    try {
-      if (navigator.mediaDevices?.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        stream.getTracks().forEach((t) => t.stop());
-      }
-    } catch {
+    if (!isSpeechRecognitionSupported()) {
+      setSupported(false);
       setMicError(
-        "Միկրոֆոնի թույլտվությունը մերժված է։ Թույլատրե՛ք միկրոֆոնը բրաուզերի կարգավորումներում։"
+        "Ձեր հեռախոսի բրաուզերը չի աջակցում խոսքի ճանաչում։ Գրե՛ք պատասխանը ստորև, կամ բացե՛ք Chrome-ով։"
       );
-      setListening(false);
+      startingRef.current = false;
       return;
     }
 
+    // Do NOT call getUserMedia first on mobile — it locks the mic
+    // and then SpeechRecognition freezes or immediately disconnects.
     controllerRef.current?.stop();
     setListening(true);
 
     const controller = startListeningFrench(
       (text) => setTranscript(text),
       (err) => {
+        startingRef.current = false;
+        setListening(false);
         if (err === "unsupported") {
           setSupported(false);
-          setListening(false);
           setMicError(
-            "Ձեր բրաուզերը չի աջակցում Speech-to-Text։ Փորձե՛ք Chrome կամ Edge։"
+            "Ձեր բրաուզերը չի աջակցում Speech-to-Text։ Գրե՛ք պատասխանը ստորև։"
           );
         } else if (err === "not-allowed") {
-          setListening(false);
-          setMicError("Միկրոֆոնի թույլտվությունը մերժված է։");
-        } else if (err === "restart-failed") {
-          setListening(false);
-          setMicError("Լսումը ընդհատվեց։ Կրկին սեղմե՛ք «Խոսել»։");
+          setMicError(
+            "Միկրոֆոնի թույլտվությունը մերժված է։ Թույլատրե՛ք միկրոֆոնը կայքի համար։"
+          );
+        } else if (err === "audio-capture") {
+          setMicError(
+            "Միկրոֆոնը հասանելի չէ։ Փակե՛ք այլ հավելվածները, որոնք օգտագործում են միկրոֆոնը։"
+          );
+        } else if (err === "mobile-failed" || err === "start-failed") {
+          setMicError(
+            "Խոսքի ճանաչումը չհաջողվեց։ Կրկին սեղմե՛ք կամ գրե՛ք պատասխանը։"
+          );
         }
       },
-      (isOn) => setListening(isOn)
+      (isOn) => {
+        setListening(isOn);
+        if (!isOn) startingRef.current = false;
+      }
     );
 
     controllerRef.current = controller;
     if (!controller.supported) {
       setSupported(false);
       setListening(false);
+      startingRef.current = false;
     }
   };
 
   const toggle = () => {
-    if (listening) stop();
-    else void start();
+    if (listening || startingRef.current) stop();
+    else start();
   };
 
   const evaluate = (text: string) => {
@@ -137,6 +153,12 @@ export function SpeakingExercise({
 
       <p className="text-sm text-[#062B56]/55 bg-[#FAFAFA] rounded-2xl p-3">
         💡 {prompt.tipsHy}
+        {isMobile && (
+          <>
+            <br />
+            Հեռախոսում՝ սեղմե՛ք «Խոսել», ասե՛ք մեկ նախադասություն, ապա սպասե՛ք։
+          </>
+        )}
       </p>
 
       {(!supported || micError) && (
@@ -150,7 +172,8 @@ export function SpeakingExercise({
         <Button
           onClick={toggle}
           variant={listening ? "navy" : "primary"}
-          className="flex-1"
+          className="flex-1 touch-manipulation"
+          type="button"
         >
           {listening ? "⏹ Կանգնեցնել" : "🎤 Խոսել"}
         </Button>
@@ -160,7 +183,9 @@ export function SpeakingExercise({
         <div className="flex items-center justify-center gap-2 rounded-2xl bg-[#C7E0E7] py-3">
           <span className="h-2.5 w-2.5 rounded-full bg-[#FD7035] animate-soft-pulse" />
           <p className="text-sm font-semibold text-[#062B56]">
-            Լսում է… խոսե՛ք ֆրանսերեն
+            {isMobile
+              ? "Լսում է… ասե՛ք մեկ նախադասություն"
+              : "Լսում է… խոսե՛ք ֆրանսերեն"}
           </p>
         </div>
       )}
@@ -177,8 +202,9 @@ export function SpeakingExercise({
         <Button
           onClick={() => evaluate(transcript)}
           disabled={!transcript.trim()}
-          className="w-full"
+          className="w-full touch-manipulation"
           variant="secondary"
+          type="button"
         >
           Գնահատել
         </Button>
