@@ -5,6 +5,7 @@ import { SPEAKING_PROMPTS } from "@/data/listening";
 import { SpeakingExercise } from "@/components/exercises/SpeakingExercise";
 import { useProgress } from "@/lib/store";
 import { Button } from "@/components/ui/Button";
+import { AppHeader } from "@/components/layout/AppHeader";
 import type { Level } from "@/lib/types";
 
 export default function SpeakPage() {
@@ -29,7 +30,8 @@ export default function SpeakPage() {
   }
 
   return (
-    <div className="px-5 pt-6 pb-8 space-y-5">
+    <div className="px-5 pt-5 pb-8 space-y-5">
+      <AppHeader />
       <div>
         <h1 className="text-3xl font-extrabold text-[#062B56]">Խոսել</h1>
         <p className="text-[#062B56]/60 mt-1">

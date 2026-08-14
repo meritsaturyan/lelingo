@@ -5,6 +5,7 @@ import { useProgress } from "@/lib/store";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar, ProgressRing } from "@/components/ui/ProgressBar";
 import { StreakCard } from "@/components/ui/StreakCard";
+import { AppHeader } from "@/components/layout/AppHeader";
 import { Button } from "@/components/ui/Button";
 
 export default function ProgressPage() {
@@ -26,7 +27,8 @@ export default function ProgressPage() {
   );
 
   return (
-    <div className="px-5 pt-6 pb-8 space-y-5">
+    <div className="px-5 pt-5 pb-8 space-y-5">
+      <AppHeader showSettings />
       <h1 className="text-3xl font-extrabold text-[#062B56]">Առաջընթաց</h1>
 
       <Card variant="blue" className="text-center py-6">

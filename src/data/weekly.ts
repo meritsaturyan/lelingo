@@ -174,10 +174,10 @@ const sundayTest: DayLesson = {
 
 function buildWeek(level: Level): DayLesson[] {
   const grammarMap: Record<Level, [string, string, string]> = {
-    A1: ["a1-present", "a1-articles", "a1-etre-avoir"],
-    A2: ["a2-passe-compose", "a2-futur-proche", "a2-passe-compose"],
-    B1: ["b1-subjonctif", "b1-conditionnel", "b1-subjonctif"],
-    B2: ["b2-discours", "b1-conditionnel", "b2-discours"],
+    A1: ["a1-pronoms", "a1-etre", "a1-er-verbs"],
+    A2: ["a1-articles", "a1-questions", "a1-aller"],
+    B1: ["a1-negation", "a1-ir-verbs", "a1-irregular"],
+    B2: ["a1-irregular", "a1-aller", "a1-questions"],
   };
   const [g1, g2, g3] = grammarMap[level];
 

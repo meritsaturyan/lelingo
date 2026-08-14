@@ -9,11 +9,42 @@ export function speakFrench(text: string, rate = 0.9): Promise<void> {
     utterance.lang = "fr-FR";
     utterance.rate = rate;
 
-    const voices = window.speechSynthesis.getVoices();
-    const fr =
-      voices.find((v) => v.lang.startsWith("fr") && v.name.includes("Google")) ||
-      voices.find((v) => v.lang.startsWith("fr"));
-    if (fr) utterance.voice = fr;
+    const pickVoice = () => {
+      const voices = window.speechSynthesis.getVoices();
+      const preferred = [
+        "Google français",
+        "Amélie",
+        "Thomas",
+        "Marie",
+        "Audrey",
+        "Microsoft Hortense",
+        "Microsoft Julie",
+        "fr-FR",
+      ];
+      for (const name of preferred) {
+        const match = voices.find(
+          (v) =>
+            v.lang.toLowerCase().startsWith("fr") &&
+            v.name.toLowerCase().includes(name.toLowerCase())
+        );
+        if (match) return match;
+      }
+      return (
+        voices.find((v) => v.lang === "fr-FR") ||
+        voices.find((v) => v.lang.toLowerCase().startsWith("fr"))
+      );
+    };
+
+    const applyVoice = () => {
+      const fr = pickVoice();
+      if (fr) utterance.voice = fr;
+    };
+
+    applyVoice();
+    // Voices often load async
+    if (!window.speechSynthesis.getVoices().length) {
+      window.speechSynthesis.onvoiceschanged = () => applyVoice();
+    }
 
     utterance.onend = () => resolve();
     utterance.onerror = () => resolve();

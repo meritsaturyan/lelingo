@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { LevelCard } from "@/components/ui/LevelCard";
@@ -9,14 +10,14 @@ import type { Level } from "@/lib/types";
 import { useProgress } from "@/lib/store";
 
 const features = [
-  { icon: "📖", label: "Բառապաշար" },
-  { icon: "✏️", label: "Քերականություն" },
-  { icon: "🎧", label: "Լսել" },
-  { icon: "✍️", label: "Թելադրություն" },
-  { icon: "🎤", label: "Խոսել" },
-  { icon: "📝", label: "Շաբաթական թեստեր" },
-  { icon: "📅", label: "Ամենօրյա պարապմունք" },
-  { icon: "📊", label: "Առաջընթացի հետևում" },
+  { label: "Բառապաշար" },
+  { label: "Քերականություն" },
+  { label: "Լսել" },
+  { label: "Թելադրություն" },
+  { label: "Խոսել" },
+  { label: "Շաբաթական թեստեր" },
+  { label: "Ամենօրյա պարապմունք" },
+  { label: "Առաջընթացի հետևում" },
 ];
 
 export default function OnboardingPage() {
@@ -27,24 +28,21 @@ export default function OnboardingPage() {
 
   if (step === 0) {
     return (
-      <div className="min-h-dvh flex flex-col bg-[#FAFAFA]">
-        <div className="relative flex-1 bg-[#C7E0E7] rounded-b-[40px] overflow-hidden flex flex-col items-center justify-center px-6 pt-12 pb-16">
+      <div className="min-h-dvh flex flex-col bg-[#C7E0E7]">
+        <div className="relative flex-1 overflow-hidden flex flex-col items-center justify-center px-6 pt-12 pb-10">
           <span className="star-deco top-10 left-10 animate-soft-pulse" />
           <span className="star-deco top-20 right-14 animate-soft-pulse" style={{ animationDelay: "0.5s" }} />
           <span className="star-deco bottom-24 left-1/4 animate-soft-pulse" style={{ animationDelay: "1s" }} />
-          <span className="star-deco top-32 right-1/3 animate-soft-pulse" style={{ animationDelay: "1.5s" }} />
 
-          <p className="text-sm font-semibold tracking-[0.2em] uppercase text-[#062B56]/50 mb-3 animate-fade-up">
-            Le Lingo
-          </p>
-          <div className="animate-float relative">
-            <div className="w-40 h-44 relative">
-              <div className="absolute bottom-0 left-2 w-32 h-8 bg-[#062B56] rounded-lg rotate-[-4deg]" />
-              <div className="absolute bottom-4 left-4 w-32 h-8 bg-[#062B56]/80 rounded-lg rotate-[-2deg]" />
-              <div className="absolute bottom-8 left-6 w-32 h-8 bg-[#062B56]/55 rounded-lg" />
-              <div className="absolute bottom-12 left-8 w-32 h-8 bg-white/80 rounded-lg rotate-[2deg]" />
-              <div className="absolute -top-2 right-0 h-10 w-10 rounded-full bg-[#FD7035]/40" />
-            </div>
+          <div className="animate-float relative w-full max-w-[280px]">
+            <Image
+              src="/logo.png"
+              alt="Le Lingo"
+              width={560}
+              height={280}
+              className="w-full h-auto object-contain drop-shadow-sm"
+              priority
+            />
           </div>
           <h1 className="text-3xl font-extrabold text-[#062B56] text-center mt-8 animate-fade-up leading-tight">
             Բարի գալուստ
@@ -53,7 +51,7 @@ export default function OnboardingPage() {
           </h1>
         </div>
 
-        <div className="px-6 py-8 -mt-6 relative z-10">
+        <div className="px-6 py-8 relative z-10">
           <div className="bg-white rounded-[32px] shadow-[0_8px_40px_rgba(6,43,86,0.08)] p-6 animate-fade-up">
             <p className="text-[#062B56]/70 leading-relaxed text-center mb-5">
               Le Lingo-ն օգնում է հայերեն խոսողներին սովորել ֆրանսերեն՝ բառապաշարի,
@@ -63,9 +61,8 @@ export default function OnboardingPage() {
               {features.map((f) => (
                 <div
                   key={f.label}
-                  className="flex items-center gap-2 rounded-2xl bg-[#FAFAFA] px-3 py-2.5"
+                  className="flex items-center gap-2 rounded-2xl bg-[#C7E0E7]/40 px-3 py-2.5"
                 >
-                  <span>{f.icon}</span>
                   <span className="text-sm font-medium text-[#062B56]">{f.label}</span>
                 </div>
               ))}
@@ -91,7 +88,10 @@ export default function OnboardingPage() {
   }
 
   return (
-    <div className="min-h-dvh px-5 py-8 pb-10">
+    <div className="min-h-dvh px-5 py-8 pb-10 bg-[#C7E0E7]/30">
+      <div className="mb-4">
+        <Image src="/logo2.png" alt="Le Lingo" width={120} height={40} className="h-9 w-auto" />
+      </div>
       <button
         type="button"
         onClick={() => setStep(0)}

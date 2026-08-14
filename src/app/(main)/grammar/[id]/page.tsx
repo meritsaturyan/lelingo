@@ -7,7 +7,62 @@ import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { GrammarExercise } from "@/components/exercises/GrammarExercise";
+import { AppHeader } from "@/components/layout/AppHeader";
 import { useProgress } from "@/lib/store";
+
+const ER_TABLE = [
+  ["Je", "-e", "je parle"],
+  ["Tu", "-es", "tu parles"],
+  ["Il / Elle", "-e", "il parle"],
+  ["Nous", "-ons", "nous parlons"],
+  ["Vous", "-ez", "vous parlez"],
+  ["Ils / Elles", "-ent", "ils parlent"],
+];
+
+const IR_TABLE = [
+  ["Je", "-is", "je finis"],
+  ["Tu", "-is", "tu finis"],
+  ["Il / Elle", "-it", "il finit"],
+  ["Nous", "-issons", "nous finissons"],
+  ["Vous", "-issez", "vous finissez"],
+  ["Ils / Elles", "-issent", "ils finissent"],
+];
+
+function ConjugationTable({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: string[][];
+}) {
+  return (
+    <Card className="!p-0 overflow-hidden">
+      <div className="px-4 py-3 bg-[#C7E0E7]">
+        <p className="font-bold text-[#062B56]">{title}</p>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-[#062B56]/10 text-left">
+              <th className="px-4 py-2 text-[#062B56]/60 font-semibold">Sujet</th>
+              <th className="px-4 py-2 text-[#062B56]/60 font-semibold">Terminaison</th>
+              <th className="px-4 py-2 text-[#062B56]/60 font-semibold">Exemple</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r[0]} className="border-b border-[#062B56]/05 last:border-0">
+                <td className="px-4 py-2.5 font-medium text-[#062B56]">{r[0]}</td>
+                <td className="px-4 py-2.5 text-[#FD7035] font-semibold">{r[1]}</td>
+                <td className="px-4 py-2.5 text-[#062B56]">{r[2]}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </Card>
+  );
+}
 
 export default function GrammarPage({
   params,
@@ -31,14 +86,15 @@ export default function GrammarPage({
   }
 
   const dayMap: Record<string, string> = {
-    "a1-present": "tuesday",
+    "a1-pronoms": "tuesday",
+    "a1-etre": "tuesday",
     "a1-articles": "thursday",
-    "a1-etre-avoir": "saturday",
-    "a2-passe-compose": "tuesday",
-    "a2-futur-proche": "thursday",
-    "b1-subjonctif": "tuesday",
-    "b1-conditionnel": "thursday",
-    "b2-discours": "tuesday",
+    "a1-er-verbs": "saturday",
+    "a1-questions": "thursday",
+    "a1-aller": "saturday",
+    "a1-negation": "tuesday",
+    "a1-ir-verbs": "thursday",
+    "a1-irregular": "saturday",
   };
 
   const finish = () => {
@@ -52,7 +108,8 @@ export default function GrammarPage({
   if (phase === "done") {
     const score = Math.round((correct / lesson.exercises.length) * 100);
     return (
-      <div className="px-5 py-10 space-y-5">
+      <div className="px-5 pt-5 py-10 space-y-5">
+        <AppHeader />
         <Card variant="blue" className="text-center py-8">
           <h1 className="text-2xl font-extrabold text-[#062B56]">Արդյունք</h1>
           <p className="text-5xl font-bold text-[#FD7035] mt-3">{score}%</p>
@@ -70,7 +127,8 @@ export default function GrammarPage({
   }
 
   return (
-    <div className="px-5 pt-6 pb-8 space-y-5">
+    <div className="px-5 pt-5 pb-8 space-y-5">
+      <AppHeader />
       <Link href="/learn" className="text-sm text-[#062B56]/50">
         ← Վերադառնալ
       </Link>
@@ -88,13 +146,28 @@ export default function GrammarPage({
       {phase === "explain" && (
         <>
           <Card>
-            <p className="text-[#062B56] leading-relaxed">{lesson.explanation}</p>
+            <p className="text-[#062B56] leading-relaxed whitespace-pre-line">
+              {lesson.explanation}
+            </p>
           </Card>
 
           <Card variant="accent">
             <p className="text-sm font-semibold text-[#062B56]/60 mb-1">Կանոն</p>
-            <p className="text-[#062B56] font-medium">{lesson.rule}</p>
+            <p className="text-[#062B56] font-medium whitespace-pre-line">{lesson.rule}</p>
           </Card>
+
+          {lesson.id === "a1-er-verbs" && (
+            <ConjugationTable
+              title="Terminaisons : -e, -es, -e, -ons, -ez, -ent"
+              rows={ER_TABLE}
+            />
+          )}
+          {lesson.id === "a1-ir-verbs" && (
+            <ConjugationTable
+              title="Terminaisons : -is, -is, -it, -issons, -issez, -issent"
+              rows={IR_TABLE}
+            />
+          )}
 
           <div className="space-y-3">
             <h2 className="font-bold text-[#062B56]">Օրինակներ</h2>

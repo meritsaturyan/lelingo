@@ -1,26 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useProgress } from "@/lib/store";
 import { Card } from "@/components/ui/Card";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { StreakCard, WeeklyCalendar } from "@/components/ui/StreakCard";
 import { LessonCard } from "@/components/ui/LessonCard";
+import { AppHeader, lessonImage } from "@/components/layout/AppHeader";
 import { getWeeklySchedule } from "@/data/weekly";
 import { getDayOfWeek } from "@/lib/utils";
 import type { Level } from "@/lib/types";
-
-const dayKeys = [
-  "monday",
-  "tuesday",
-  "wednesday",
-  "thursday",
-  "friday",
-  "saturday",
-  "sunday",
-] as const;
-
-const variants = ["blue", "accent", "blue", "accent"] as const;
 
 export default function DashboardPage() {
   const { progress } = useProgress();
@@ -36,7 +26,9 @@ export default function DashboardPage() {
     100;
 
   return (
-    <div className="px-5 pt-6 pb-4 space-y-5">
+    <div className="px-5 pt-5 pb-4 space-y-5">
+      <AppHeader showSettings />
+
       <header className="flex items-center justify-between animate-fade-up">
         <div className="flex items-center gap-3">
           <div className="h-12 w-12 rounded-full bg-[#C7E0E7] flex items-center justify-center text-lg font-bold text-[#062B56]">
@@ -44,26 +36,8 @@ export default function DashboardPage() {
           </div>
           <div>
             <p className="text-sm text-[#062B56]/55">Բարև, {progress.name}</p>
-            <p className="font-bold text-[#062B56]">
-              Մակարդակ {level}
-            </p>
+            <p className="font-bold text-[#062B56]">Մակարդակ {level}</p>
           </div>
-        </div>
-        <div className="flex gap-2">
-          <Link
-            href="/settings"
-            className="h-10 w-10 rounded-full bg-white shadow-sm flex items-center justify-center text-[#062B56]"
-            aria-label="Ծանուցումներ"
-          >
-            🔔
-          </Link>
-          <Link
-            href="/vocabulary"
-            className="h-10 w-10 rounded-full bg-white shadow-sm flex items-center justify-center text-[#062B56]"
-            aria-label="Որոնել"
-          >
-            🔍
-          </Link>
         </div>
       </header>
 
@@ -119,23 +93,43 @@ export default function DashboardPage() {
             subtitle={todayLesson.themeFr}
             type={todayLesson.type}
             status="today"
-            variant={variants[todayIdx % variants.length]}
+            variant="blue"
             dayLabel={todayLesson.dayLabelHy}
+            image={lessonImage(todayIdx)}
           />
         </div>
       )}
 
       <div className="grid grid-cols-2 gap-3">
         <Link href="/vocabulary">
-          <Card variant="blue" className="h-full">
-            <p className="text-2xl mb-1">📚</p>
-            <p className="font-bold text-[#062B56]">Բառապաշար</p>
+          <Card variant="blue" className="h-full !p-0 overflow-hidden">
+            <div className="h-24 relative">
+              <Image src="/paris.jpg" alt="" fill className="object-cover" />
+            </div>
+            <p className="font-bold text-[#062B56] p-4">Բառապաշար</p>
           </Card>
         </Link>
         <Link href="/dictation">
-          <Card variant="accent" className="h-full">
-            <p className="text-2xl mb-1">✍️</p>
-            <p className="font-bold text-[#062B56]">Թելադրություն</p>
+          <Card variant="accent" className="h-full !p-0 overflow-hidden">
+            <div className="h-24 relative">
+              <Image src="/cafe.jpg" alt="" fill className="object-cover" />
+            </div>
+            <p className="font-bold text-[#062B56] p-4">Թելադրություն</p>
+          </Card>
+        </Link>
+        <Link href="/quiz" className="col-span-2">
+          <Card variant="blue" className="!p-0 overflow-hidden">
+            <div className="flex items-center gap-4">
+              <div className="h-24 w-28 relative shrink-0">
+                <Image src="/caxik.jpg" alt="" fill className="object-cover" />
+              </div>
+              <div className="pr-4">
+                <p className="font-bold text-[#062B56] text-lg">Quiz</p>
+                <p className="text-sm text-[#062B56]/65">
+                  Նկարներով բառապաշարի վարժություն
+                </p>
+              </div>
+            </div>
           </Card>
         </Link>
       </div>

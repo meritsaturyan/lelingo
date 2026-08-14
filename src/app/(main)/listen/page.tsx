@@ -6,6 +6,7 @@ import { useProgress } from "@/lib/store";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { AppHeader } from "@/components/layout/AppHeader";
 import type { Level } from "@/lib/types";
 
 export default function ListenPage() {
@@ -66,7 +67,8 @@ export default function ListenPage() {
   const maxReplays = ex.maxReplays ?? 3;
 
   return (
-    <div className="px-5 pt-6 pb-8 space-y-5">
+    <div className="px-5 pt-5 pb-8 space-y-5">
+      <AppHeader />
       <div>
         <h1 className="text-3xl font-extrabold text-[#062B56]">Լսել</h1>
         <p className="text-[#062B56]/60 mt-1">

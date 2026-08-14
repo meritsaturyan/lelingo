@@ -5,6 +5,7 @@ import Link from "next/link";
 import { VOCAB_CATEGORIES, VOCABULARY } from "@/data/vocabulary";
 import { VocabularyCard } from "@/components/ui/VocabularyCard";
 import { useProgress } from "@/lib/store";
+import { AppHeader } from "@/components/layout/AppHeader";
 import type { Level } from "@/lib/types";
 
 export default function VocabCategoryPage({
@@ -33,13 +34,14 @@ export default function VocabCategoryPage({
   }
 
   return (
-    <div className="px-5 pt-6 pb-8 space-y-4">
+    <div className="px-5 pt-5 pb-8 space-y-4">
+      <AppHeader />
       <Link href="/vocabulary" className="text-sm text-[#062B56]/50">
         ← Բառապաշար
       </Link>
       <div>
         <h1 className="text-3xl font-extrabold text-[#062B56]">
-          {cat.emoji} {cat.nameHy}
+          {cat.nameHy}
         </h1>
         <p className="text-[#062B56]/60">{words.length} բառ</p>
       </div>

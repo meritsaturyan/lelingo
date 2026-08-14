@@ -6,6 +6,7 @@ import { DictationExercise } from "@/components/exercises/DictationExercise";
 import { useProgress } from "@/lib/store";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { AppHeader } from "@/components/layout/AppHeader";
 import type { Level } from "@/lib/types";
 
 export default function DictationPage() {
@@ -38,7 +39,8 @@ export default function DictationPage() {
   }
 
   return (
-    <div className="px-5 pt-6 pb-8 space-y-5">
+    <div className="px-5 pt-5 pb-8 space-y-5">
+      <AppHeader />
       <div>
         <h1 className="text-3xl font-extrabold text-[#062B56]">Թելադրություն</h1>
         <p className="text-[#062B56]/60 mt-1">

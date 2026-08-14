@@ -1,19 +1,32 @@
+import Image from "next/image";
 import { Card } from "./Card";
 import { motivationalMessage } from "@/lib/utils";
+import { streakImage } from "@/components/layout/AppHeader";
 
 export function StreakCard({ streak }: { streak: number }) {
+  const img = streakImage(Math.max(1, streak));
+
   return (
     <Card variant="accent" className="relative overflow-hidden">
-      <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full bg-[#FD7035]/20" />
-      <div className="absolute right-8 bottom-0 h-16 w-16 rounded-full bg-[#FD7035]/10" />
-      <div className="relative">
-        <p className="text-sm font-medium text-[#062B56]/70">Անընդմեջ սովորում</p>
-        <p className="text-3xl font-bold text-[#062B56] mt-1">
-          🔥 {streak} օր անընդմեջ
-        </p>
-        <p className="text-sm text-[#062B56]/75 mt-3 leading-relaxed">
-          {motivationalMessage(streak)}
-        </p>
+      <div className="relative flex items-center gap-4">
+        <div className="h-20 w-20 rounded-2xl overflow-hidden bg-white shadow-sm shrink-0">
+          <Image
+            src={img}
+            alt="Streak"
+            width={80}
+            height={80}
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-[#062B56]/70">Անընդմեջ սովորում</p>
+          <p className="text-2xl font-bold text-[#062B56] mt-1">
+            {streak} օր անընդմեջ
+          </p>
+          <p className="text-sm text-[#062B56]/75 mt-2 leading-relaxed">
+            {motivationalMessage(streak)}
+          </p>
+        </div>
       </div>
     </Card>
   );

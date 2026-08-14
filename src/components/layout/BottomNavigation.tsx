@@ -1,15 +1,16 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const tabs = [
-  { href: "/dashboard", label: "Գլխավոր", icon: "🏠" },
-  { href: "/learn", label: "Սովորել", icon: "📚" },
-  { href: "/listen", label: "Լսել", icon: "🎧" },
-  { href: "/speak", label: "Խոսել", icon: "🎤" },
-  { href: "/progress", label: "Առաջընթաց", icon: "📊" },
+  { href: "/dashboard", label: "Գլխավոր", icon: "/glxavor.jpg" },
+  { href: "/learn", label: "Սովորել", icon: "/sovorel.jpg" },
+  { href: "/listen", label: "Լսել", icon: "/lsel.jpg" },
+  { href: "/speak", label: "Խոսել", icon: "/xosel.jpg" },
+  { href: "/progress", label: "Առաջընթաց", icon: "/arajyntac.jpg" },
 ];
 
 export function BottomNavigation() {
@@ -27,13 +28,21 @@ export function BottomNavigation() {
                 key={tab.href}
                 href={tab.href}
                 className={cn(
-                  "flex flex-col items-center gap-0.5 px-3 py-2 rounded-2xl transition-all min-w-[56px]",
+                  "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-2xl transition-all min-w-[56px]",
                   active
                     ? "bg-[#C7E0E7] text-[#062B56]"
                     : "text-[#062B56]/45 hover:text-[#062B56]"
                 )}
               >
-                <span className="text-lg">{tab.icon}</span>
+                <span className="h-7 w-7 rounded-full overflow-hidden bg-white shadow-sm">
+                  <Image
+                    src={tab.icon}
+                    alt={tab.label}
+                    width={28}
+                    height={28}
+                    className="h-full w-full object-cover"
+                  />
+                </span>
                 <span className="text-[10px] font-semibold">{tab.label}</span>
               </Link>
             );

@@ -56,7 +56,7 @@ export interface VocabItem {
 export interface VocabCategory {
   id: string;
   nameHy: string;
-  emoji: string;
+  image: string;
   description: string;
 }
 

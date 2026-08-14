@@ -8,6 +8,7 @@ import { AudioIconButton } from "@/components/ui/AudioPlayer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { GrammarExercise } from "@/components/exercises/GrammarExercise";
+import { AppHeader } from "@/components/layout/AppHeader";
 import type { Level } from "@/lib/types";
 import { useRouter } from "next/navigation";
 

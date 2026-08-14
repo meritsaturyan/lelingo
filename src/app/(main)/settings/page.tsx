@@ -6,13 +6,15 @@ import { LevelCard } from "@/components/ui/LevelCard";
 import { useProgress } from "@/lib/store";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
+import { AppHeader } from "@/components/layout/AppHeader";
 import type { Level } from "@/lib/types";
 
 export default function SettingsPage() {
   const { progress, setLevel, resetAll } = useProgress();
 
   return (
-    <div className="px-5 pt-6 pb-8 space-y-5">
+    <div className="px-5 pt-5 pb-8 space-y-5">
+      <AppHeader />
       <Link href="/dashboard" className="text-sm text-[#062B56]/50">
         ← Գլխավոր
       </Link>
