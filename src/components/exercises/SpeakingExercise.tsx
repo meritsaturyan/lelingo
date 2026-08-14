@@ -13,6 +13,7 @@ import { evaluateSpeaking } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
+import Image from "next/image";
 
 export function SpeakingExercise({
   prompt,
@@ -177,10 +178,17 @@ export function SpeakingExercise({
         <Button
           onClick={toggle}
           variant={listening ? "navy" : "primary"}
-          className="flex-1 touch-manipulation"
+          className="flex-1 touch-manipulation gap-2"
           type="button"
         >
-          {listening ? "⏹ Կանգնեցնել" : "🎤 Խոսել"}
+          <Image
+            src="/speech.jpg"
+            alt=""
+            width={28}
+            height={28}
+            className="h-7 w-7 rounded-full object-cover"
+          />
+          {listening ? "Կանգնեցնել" : "Խոսել"}
         </Button>
       </div>
 
