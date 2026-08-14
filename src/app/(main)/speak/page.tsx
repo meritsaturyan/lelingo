@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Image from "next/image";
 import { SPEAKING_PROMPTS } from "@/data/listening";
 import { SpeakingExercise } from "@/components/exercises/SpeakingExercise";
 import { useProgress } from "@/lib/store";
@@ -38,15 +37,6 @@ export default function SpeakPage() {
       <div className="px-5 pt-5 pb-8 space-y-5">
         <AppHeader />
         <Card variant="blue" className="text-center py-10 space-y-4">
-          <div className="mx-auto h-24 w-24 rounded-full overflow-hidden shadow-sm">
-            <Image
-              src="/speech.jpg"
-              alt="Speech"
-              width={96}
-              height={96}
-              className="h-full w-full object-cover"
-            />
-          </div>
           <h1 className="text-4xl font-extrabold text-[#062B56]">Վերջ</h1>
           <p className="text-[#062B56]/70">
             Դու անցար բոլոր խոսելու թեմաները։ Շատ լավ է։
@@ -69,22 +59,11 @@ export default function SpeakPage() {
   return (
     <div className="px-5 pt-5 pb-8 space-y-5">
       <AppHeader />
-      <div className="flex items-center gap-3">
-        <div className="h-12 w-12 rounded-full overflow-hidden shadow-sm shrink-0">
-          <Image
-            src="/speech.jpg"
-            alt="Speech"
-            width={48}
-            height={48}
-            className="h-full w-full object-cover"
-          />
-        </div>
-        <div>
-          <h1 className="text-3xl font-extrabold text-[#062B56]">Խոսել</h1>
-          <p className="text-[#062B56]/60 mt-0.5">
-            Թեմա {index + 1} / {prompts.length} · {level}
-          </p>
-        </div>
+      <div>
+        <h1 className="text-3xl font-extrabold text-[#062B56]">Խոսել</h1>
+        <p className="text-[#062B56]/60 mt-0.5">
+          Թեմա {index + 1} / {prompts.length} · {level}
+        </p>
       </div>
 
       <SpeakingExercise

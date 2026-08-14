@@ -13,7 +13,6 @@ import { evaluateSpeaking } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
-import Image from "next/image";
 
 export function SpeakingExercise({
   prompt,
@@ -154,7 +153,7 @@ export function SpeakingExercise({
         <p className="text-[#062B56]/65 mt-1">{prompt.promptHy}</p>
       </div>
 
-      <AudioPlayer text={prompt.promptFr} label="Լսել հարցը" />
+      <AudioPlayer text={prompt.promptFr} label="Լսել հարցը" iconSrc="/speech.jpg" />
 
       <p className="text-sm text-[#062B56]/55 bg-[#FAFAFA] rounded-2xl p-3">
         💡 {prompt.tipsHy}
@@ -178,16 +177,9 @@ export function SpeakingExercise({
         <Button
           onClick={toggle}
           variant={listening ? "navy" : "primary"}
-          className="flex-1 touch-manipulation gap-2"
+          className="flex-1 touch-manipulation"
           type="button"
         >
-          <Image
-            src="/speech.jpg"
-            alt=""
-            width={28}
-            height={28}
-            className="h-7 w-7 rounded-full object-cover"
-          />
           {listening ? "Կանգնեցնել" : "Խոսել"}
         </Button>
       </div>

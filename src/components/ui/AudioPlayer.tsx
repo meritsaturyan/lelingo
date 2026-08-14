@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { speakFrench, stopSpeaking } from "@/lib/tts";
 import { useState } from "react";
 import { Button } from "./Button";
@@ -9,11 +10,13 @@ export function AudioPlayer({
   label = "Լսել",
   rate = 0.9,
   className,
+  iconSrc,
 }: {
   text: string;
   label?: string;
   rate?: number;
   className?: string;
+  iconSrc?: string;
 }) {
   const [playing, setPlaying] = useState(false);
 
@@ -32,7 +35,17 @@ export function AudioPlayer({
       onClick={() => (playing ? stopSpeaking() : play())}
       aria-label={label}
     >
-      <span className="text-base">{playing ? "⏹" : "🔊"}</span>
+      {iconSrc ? (
+        <Image
+          src={iconSrc}
+          alt=""
+          width={22}
+          height={22}
+          className="h-[22px] w-[22px] rounded-full object-cover"
+        />
+      ) : (
+        <span className="text-base">{playing ? "⏹" : "🔊"}</span>
+      )}
       <span>{playing ? "Կանգնեցնել" : label}</span>
     </Button>
   );
