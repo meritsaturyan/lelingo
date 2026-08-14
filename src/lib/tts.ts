@@ -1,4 +1,6 @@
-export function speakFrench(text: string, rate = 0.9): Promise<void> {
+let currentAudio: HTMLAudioElement | null = null;
+
+function speakFrenchBrowser(text: string, rate = 0.9): Promise<void> {
   return new Promise((resolve) => {
     if (typeof window === "undefined" || !window.speechSynthesis) {
       resolve();
@@ -7,19 +9,21 @@ export function speakFrench(text: string, rate = 0.9): Promise<void> {
     window.speechSynthesis.cancel();
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "fr-FR";
-    utterance.rate = rate;
+    utterance.rate = Math.min(1, Math.max(0.7, rate));
+    utterance.pitch = 1.02;
 
     const pickVoice = () => {
       const voices = window.speechSynthesis.getVoices();
       const preferred = [
+        "Denise",
         "Google français",
         "Amélie",
         "Thomas",
+        "Hortense Online",
+        "Julie Online",
+        "Natural",
         "Marie",
         "Audrey",
-        "Microsoft Hortense",
-        "Microsoft Julie",
-        "fr-FR",
       ];
       for (const name of preferred) {
         const match = voices.find(
@@ -39,9 +43,7 @@ export function speakFrench(text: string, rate = 0.9): Promise<void> {
       const fr = pickVoice();
       if (fr) utterance.voice = fr;
     };
-
     applyVoice();
-    // Voices often load async
     if (!window.speechSynthesis.getVoices().length) {
       window.speechSynthesis.onvoiceschanged = () => applyVoice();
     }
@@ -52,11 +54,48 @@ export function speakFrench(text: string, rate = 0.9): Promise<void> {
   });
 }
 
+/** High-quality French neural voice (Denise) via API, with browser fallback */
+export async function speakFrench(text: string, rate = 0.9): Promise<void> {
+  if (typeof window === "undefined") return;
+  stopSpeaking();
+
+  try {
+    const url = `/api/tts?text=${encodeURIComponent(text)}&rate=${rate}`;
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.preload = "auto";
+
+    await new Promise<void>((resolve, reject) => {
+      audio.onended = () => resolve();
+      audio.onerror = () => reject(new Error("audio_error"));
+      const playPromise = audio.play();
+      if (playPromise) playPromise.catch(reject);
+    });
+  } catch {
+    await speakFrenchBrowser(text, rate);
+  } finally {
+    if (currentAudio) {
+      currentAudio = null;
+    }
+  }
+}
+
 export function stopSpeaking() {
-  if (typeof window !== "undefined" && window.speechSynthesis) {
+  if (typeof window === "undefined") return;
+  if (currentAudio) {
+    try {
+      currentAudio.pause();
+      currentAudio.src = "";
+    } catch {
+      /* ignore */
+    }
+    currentAudio = null;
+  }
+  if (window.speechSynthesis) {
     window.speechSynthesis.cancel();
   }
 }
+
 
 export function isMobileDevice(): boolean {
   if (typeof window === "undefined") return false;
