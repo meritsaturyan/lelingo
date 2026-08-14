@@ -85,7 +85,8 @@ export default function DayLessonPage({
   }
 
   return (
-    <div className="px-5 pt-6 pb-8 space-y-5">
+    <div className="px-5 pt-5 pb-8 space-y-5">
+      <AppHeader />
       <Link href="/learn" className="text-sm text-[#062B56]/50">
         ← Վերադառնալ
       </Link>
