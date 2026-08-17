@@ -140,7 +140,6 @@ export function SpeakingExercise({
     stop();
     const r = evaluateSpeaking(text, prompt.expectedKeywords);
     setResult(r);
-    onComplete?.(r.total);
   };
 
   return (
@@ -258,6 +257,16 @@ export function SpeakingExercise({
               <p className="text-sm text-[#062B56]/70 mt-2">{c.explanationHy}</p>
             </div>
           ))}
+
+          {onComplete && (
+            <Button
+              className="w-full"
+              size="lg"
+              onClick={() => onComplete(result.total)}
+            >
+              Հաջորդ
+            </Button>
+          )}
         </div>
       )}
     </Card>

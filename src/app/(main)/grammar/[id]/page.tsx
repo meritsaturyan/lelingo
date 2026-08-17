@@ -1,7 +1,8 @@
 "use client";
 
-import { use, useState } from "react";
+import { Suspense, use, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { getGrammarById } from "@/data/grammar";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { Card } from "@/components/ui/Card";
@@ -64,12 +65,9 @@ function ConjugationTable({
   );
 }
 
-export default function GrammarPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+function GrammarInner({ id }: { id: string }) {
+  const searchParams = useSearchParams();
+  const lessonKey = searchParams.get("lesson");
   const lesson = getGrammarById(id);
   const [phase, setPhase] = useState<"explain" | "practice" | "done">("explain");
   const [exIndex, setExIndex] = useState(0);
@@ -86,19 +84,19 @@ export default function GrammarPage({
   }
 
   const dayMap: Record<string, string> = {
-    "a1-pronoms": "tuesday",
-    "a1-etre": "tuesday",
-    "a1-articles": "thursday",
-    "a1-er-verbs": "saturday",
-    "a1-questions": "thursday",
-    "a1-aller": "saturday",
-    "a1-negation": "tuesday",
-    "a1-ir-verbs": "thursday",
-    "a1-irregular": "saturday",
+    "a1-pronoms": "w1-pronoms",
+    "a1-etre": "w1-etre",
+    "a1-articles": "w2-articles",
+    "a1-negation": "w2-negation",
+    "a1-questions": "w2-questions",
+    "a1-aller": "w3-aller",
+    "a1-er-verbs": "w3-er",
+    "a1-ir-verbs": "w4-ir",
+    "a1-irregular": "w4-irr",
   };
 
   const finish = () => {
-    const day = dayMap[lesson.id] || "tuesday";
+    const day = lessonKey || dayMap[lesson.id] || "tuesday";
     markDayComplete(day);
     addXp(30 + correct * 5);
     updateSkill("grammar", 4);
@@ -173,11 +171,9 @@ export default function GrammarPage({
             <h2 className="font-bold text-[#062B56]">Օրինակներ</h2>
             {lesson.examples.map((ex) => (
               <Card key={ex.french} variant="blue">
-                <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-lg font-bold text-[#062B56]">{ex.french}</p>
-                    <p className="text-[#062B56]/65 mt-1">{ex.armenian}</p>
-                  </div>
+                <div>
+                  <p className="text-lg font-bold text-[#062B56]">{ex.french}</p>
+                  <p className="text-[#062B56]/65 mt-1">{ex.armenian}</p>
                 </div>
                 <div className="mt-3">
                   <AudioPlayer text={ex.french} label="Լսել" />
@@ -185,10 +181,6 @@ export default function GrammarPage({
               </Card>
             ))}
           </div>
-
-          <p className="text-sm text-[#062B56]/55 text-center">
-            Նախ լսե՛ք արտասանությունը, ապա անցե՛ք վարժություններին։
-          </p>
 
           <Button className="w-full" size="lg" onClick={() => setPhase("practice")}>
             Սկսել վարժությունները
@@ -206,14 +198,25 @@ export default function GrammarPage({
             exercise={lesson.exercises[exIndex]}
             onComplete={(ok) => {
               if (ok) setCorrect((c) => c + 1);
-              setTimeout(() => {
-                if (exIndex + 1 >= lesson.exercises.length) finish();
-                else setExIndex((i) => i + 1);
-              }, 900);
+              if (exIndex + 1 >= lesson.exercises.length) finish();
+              else setExIndex((i) => i + 1);
             }}
           />
         </div>
       )}
     </div>
+  );
+}
+
+export default function GrammarPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
+  return (
+    <Suspense fallback={<div className="px-5 py-10 text-[#062B56]/50">Բեռնվում է…</div>}>
+      <GrammarInner id={id} />
+    </Suspense>
   );
 }

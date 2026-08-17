@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { WEEKLY_TEST_A1 } from "@/data/weekly";
 import { GrammarExercise } from "@/components/exercises/GrammarExercise";
 import { DictationExercise } from "@/components/exercises/DictationExercise";
@@ -19,7 +20,10 @@ type FlatItem = {
   exercise: (typeof WEEKLY_TEST_A1)[0]["exercises"][0];
 };
 
-export default function WeeklyTestPage() {
+function WeeklyTestInner() {
+  const searchParams = useSearchParams();
+  const lessonKey = searchParams.get("lesson") || "sunday";
+
   const flat: FlatItem[] = WEEKLY_TEST_A1.flatMap((section) =>
     section.exercises.map((exercise) => ({
       sectionId: section.id,
@@ -31,11 +35,9 @@ export default function WeeklyTestPage() {
 
   const [started, setStarted] = useState(false);
   const [index, setIndex] = useState(0);
-  const [results, setResults] = useState<
-    { skill: string; correct: boolean }[]
-  >([]);
+  const [results, setResults] = useState<{ skill: string; correct: boolean }[]>([]);
   const [done, setDone] = useState(false);
-  const { recordWeeklyTest, progress } = useProgress();
+  const { recordWeeklyTest, progress, markDayComplete } = useProgress();
 
   const current = flat[index];
 
@@ -44,16 +46,15 @@ export default function WeeklyTestPage() {
     const score = Math.round((correct / all.length) * 100);
     const xp = Math.round(score * 0.8) + 20;
     recordWeeklyTest(score, xp);
+    markDayComplete(lessonKey);
     setDone(true);
   };
 
   const recordAndNext = (correct: boolean) => {
     const next = [...results, { skill: current.skill, correct }];
     setResults(next);
-    setTimeout(() => {
-      if (index + 1 >= flat.length) finish(next);
-      else setIndex((i) => i + 1);
-    }, 800);
+    if (index + 1 >= flat.length) finish(next);
+    else setIndex((i) => i + 1);
   };
 
   if (done) {
@@ -84,7 +85,7 @@ export default function WeeklyTestPage() {
           primaryHref="/dashboard"
           primaryLabel="Գլխավոր էջ"
           secondaryHref="/learn"
-          secondaryLabel="Շաբաթվա պլան"
+          secondaryLabel="Ամսվա պլան"
         />
       </div>
     );
@@ -94,13 +95,9 @@ export default function WeeklyTestPage() {
     return (
       <div className="px-5 py-10 space-y-5">
         <Card variant="blue" className="text-center py-8">
-          <p className="text-4xl mb-3">📝</p>
-          <h1 className="text-3xl font-extrabold text-[#062B56]">
-            Շաբաթվա թեստ
-          </h1>
+          <h1 className="text-3xl font-extrabold text-[#062B56]">Շաբաթվա թեստ</h1>
           <p className="text-[#062B56]/70 mt-3 leading-relaxed px-2">
-            Թեստը պարունակում է միայն այս շաբաթ ուսումնասիրված նյութը՝
-            բառապաշար, քերականություն, լսել, ընթերցանություն, թելադրություն և խոսել։
+            Թեստը պարունակում է այս շաբաթ ուսումնասիրված նյութը։
           </p>
           <p className="text-sm text-[#062B56]/50 mt-3">
             {flat.length} հարց · Մակարդակ {progress.level}
@@ -147,5 +144,13 @@ export default function WeeklyTestPage() {
         />
       )}
     </div>
+  );
+}
+
+export default function WeeklyTestPage() {
+  return (
+    <Suspense fallback={<div className="px-5 py-10 text-[#062B56]/50">Բեռնվում է…</div>}>
+      <WeeklyTestInner />
+    </Suspense>
   );
 }

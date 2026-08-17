@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Nunito, Noto_Sans_Armenian } from "next/font/google";
 import { ProgressProvider } from "@/lib/store";
+import { ScreenshotGuard } from "@/components/layout/ScreenshotGuard";
 import "./globals.css";
 
 const nunito = Nunito({
@@ -37,7 +38,9 @@ export default function RootLayout({
     <html lang="hy" className={`${nunito.variable} ${armenian.variable} h-full`}>
       <body className="min-h-full antialiased">
         <ProgressProvider>
-          <div className="app-shell bg-[#FAFAFA]">{children}</div>
+          <ScreenshotGuard>
+            <div className="app-shell bg-[#FAFAFA]">{children}</div>
+          </ScreenshotGuard>
         </ProgressProvider>
       </body>
     </html>

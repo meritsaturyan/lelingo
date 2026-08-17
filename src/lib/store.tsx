@@ -16,6 +16,7 @@ const STORAGE_KEY = "le-lingo-progress-v1";
 const defaultProgress: UserProgress = {
   onboardingComplete: false,
   level: null,
+  learningGoal: null,
   name: "Ալեքս",
   xp: 0,
   streak: 0,
@@ -57,7 +58,7 @@ function saveProgress(p: UserProgress) {
 type Store = {
   progress: UserProgress;
   hydrated: boolean;
-  completeOnboarding: (level: Level, name?: string) => void;
+  completeOnboarding: (level: Level, name?: string, goal?: UserProgress["learningGoal"]) => void;
   setLevel: (level: Level) => void;
   addXp: (amount: number) => void;
   markDayComplete: (day: string) => void;
@@ -122,16 +123,20 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  const completeOnboarding = useCallback((level: Level, name?: string) => {
-    setProgress((prev) => ({
-      ...prev,
-      onboardingComplete: true,
-      level,
-      name: name || prev.name,
-      lastActiveDate: todayKey(),
-      streak: 1,
-    }));
-  }, []);
+  const completeOnboarding = useCallback(
+    (level: Level, name?: string, goal?: UserProgress["learningGoal"]) => {
+      setProgress((prev) => ({
+        ...prev,
+        onboardingComplete: true,
+        level,
+        learningGoal: goal ?? prev.learningGoal ?? null,
+        name: name || prev.name,
+        lastActiveDate: todayKey(),
+        streak: 1,
+      }));
+    },
+    []
+  );
 
   const setLevel = useCallback((level: Level) => {
     setProgress((prev) => ({ ...prev, level }));

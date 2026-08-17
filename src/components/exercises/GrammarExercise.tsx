@@ -48,7 +48,6 @@ export function GrammarExercise({
     }
     setIsCorrect(ok);
     setChecked(true);
-    onComplete?.(ok);
   };
 
   const moveWord = (idx: number) => {
@@ -178,25 +177,38 @@ export function GrammarExercise({
           Ստուգել
         </Button>
       ) : (
-        <div
-          className={`rounded-2xl p-4 ${
-            isCorrect ? "bg-[#C7E0E7]" : "bg-[#FD7035]/15"
-          }`}
-        >
-          <p className={`font-bold ${isCorrect ? "text-[#062B56]" : "text-[#FD7035]"}`}>
-            {isCorrect ? "✓ Ճիշտ է" : "✕ Սխալ է"}
-          </p>
-          {!isCorrect && (
-            <p className="text-sm text-[#062B56] mt-1">
-              Ճիշտ պատասխան՝{" "}
+        <div className="space-y-3">
+          <div
+            className={`rounded-2xl p-4 ${
+              isCorrect ? "bg-[#C7E0E7]" : "bg-[#FD7035]/15"
+            }`}
+          >
+            <p className={`font-bold ${isCorrect ? "text-[#062B56]" : "text-[#FD7035]"}`}>
+              {isCorrect ? "✓ Ճիշտ է" : "✕ Սխալ է"}
+            </p>
+            <p className="text-sm text-[#062B56] mt-2">
+              Ձեր պատասխան՝{" "}
               <strong>
-                {Array.isArray(exercise.correctAnswer)
-                  ? exercise.correctAnswer.join(", ")
-                  : exercise.correctAnswer}
+                {selected ||
+                  answer ||
+                  (exercise.type === "reorder" ? order.join(" ") : "—")}
               </strong>
             </p>
-          )}
-          <p className="text-sm text-[#062B56]/70 mt-2">{exercise.explanationHy}</p>
+            {!isCorrect && (
+              <p className="text-sm text-[#062B56] mt-1">
+                Ճիշտ պատասխան՝{" "}
+                <strong>
+                  {Array.isArray(exercise.correctAnswer)
+                    ? exercise.correctAnswer.join(", ")
+                    : exercise.correctAnswer}
+                </strong>
+              </p>
+            )}
+            <p className="text-sm text-[#062B56]/70 mt-2">{exercise.explanationHy}</p>
+          </div>
+          <Button className="w-full" size="lg" onClick={() => onComplete?.(isCorrect)}>
+            Հաջորդ
+          </Button>
         </div>
       )}
     </Card>

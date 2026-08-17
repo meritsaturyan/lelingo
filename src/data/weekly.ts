@@ -1,4 +1,5 @@
 import type { DayLesson, Level, WeeklyTestSection } from "@/lib/types";
+import { getA1Lesson } from "./a1-month";
 
 const mondayA1: DayLesson = {
   day: "monday",
@@ -9,11 +10,11 @@ const mondayA1: DayLesson = {
   themeHy: "1-ին օր․ Ողջունել և ներկայանալ",
   level: "A1",
   expressions: [
-    { french: "Bonjour", armenian: "Բարև ձեզ", pronunciation: "բոնժուր", exampleFr: "Bonjour, madame Dupont.", exampleHy: "Բարև ձեզ, տիկին Դյուպոն։" },
-    { french: "Salut", armenian: "Բարև — ընկերական տարբերակ", pronunciation: "սալյու", exampleFr: "Salut, ça va ?", exampleHy: "Բարև, ինչպե՞ս ես։" },
-    { french: "Moi, c'est…", armenian: "Ես… եմ / Իմ անունն է…", pronunciation: "մուա սե", exampleFr: "Moi, c'est Anna.", exampleHy: "Ես Աննան եմ։" },
-    { french: "Enchanté(e)", armenian: "Շատ հաճելի է", pronunciation: "անշանթե", exampleFr: "Enchanté de vous rencontrer.", exampleHy: "Շատ հաճելի է ձեզ հանդիպել։" },
-    { french: "Comment vous appelez-vous ?", armenian: "Ի՞նչ է ձեր անունը", pronunciation: "կոման վուզ ապլե վու", exampleFr: "Comment vous appelez-vous ?", exampleHy: "Ի՞նչ է ձեր անունը։" },
+    { french: "Bonjour", armenian: "Բարև ձեզ", exampleFr: "Bonjour, madame Dupont.", exampleHy: "Բարև ձեզ, տիկին Դյուպոն։" },
+    { french: "Salut", armenian: "Բարև — ընկերական տարբերակ", exampleFr: "Salut, ça va ?", exampleHy: "Բարև, ինչպե՞ս ես։" },
+    { french: "Moi, c'est…", armenian: "Ես… եմ / Իմ անունն է…", exampleFr: "Moi, c'est Anna.", exampleHy: "Ես Աննան եմ։" },
+    { french: "Enchanté(e)", armenian: "Շատ հաճելի է", exampleFr: "Enchanté de vous rencontrer.", exampleHy: "Շատ հաճելի է ձեզ հանդիպել։" },
+    { french: "Comment vous appelez-vous ?", armenian: "Ի՞նչ է ձեր անունը", exampleFr: "Comment vous appelez-vous ?", exampleHy: "Ի՞նչ է ձեր անունը։" },
   ],
   rule: "Օգտագործեք «Bonjour» աշխատանքում կամ պաշտոնական տեղերում, իսկ «Salut»՝ միայն ընկերների հետ։",
   exercises: [
@@ -58,11 +59,11 @@ const wednesdayA1: DayLesson = {
   themeHy: "2-րդ օր․ Վիճակի հարցում",
   level: "A1",
   expressions: [
-    { french: "Comment ça va ?", armenian: "Ինչպե՞ս եք / Ինչպե՞ս է գործերդ", pronunciation: "կոման սա վա", exampleFr: "Salut ! Comment ça va ?", exampleHy: "Բարև։ Ինչպե՞ս ես։" },
-    { french: "Ça va bien, merci.", armenian: "Լավ եմ, շնորհակալություն", pronunciation: "սա վա բյեն մերսի", exampleFr: "Ça va bien, merci. Et toi ?", exampleHy: "Լավ եմ, շնորհակալություն։ Իսկ դո՞ւ։" },
-    { french: "Et vous ?", armenian: "Իսկ դուք՞", pronunciation: "ե վու", exampleFr: "Ça va bien, et vous ?", exampleHy: "Լավ եմ, իսկ դո՞ւք։" },
-    { french: "Et toi ?", armenian: "Իսկ դու՞", pronunciation: "ե տուա", exampleFr: "Ça va, et toi ?", exampleHy: "Լավ եմ, իսկ դո՞ւ։" },
-    { french: "Ça va comme ci, comme ça.", armenian: "Այսպես-այնպես", pronunciation: "սա վա կոմ սի կոմ սա", exampleFr: "Ça va comme ci, comme ça.", exampleHy: "Այսպես-այնպես է։" },
+    { french: "Comment ça va ?", armenian: "Ինչպե՞ս եք / Ինչպե՞ս է գործերդ", exampleFr: "Salut ! Comment ça va ?", exampleHy: "Բարև։ Ինչպե՞ս ես։" },
+    { french: "Ça va bien, merci.", armenian: "Լավ եմ, շնորհակալություն", exampleFr: "Ça va bien, merci. Et toi ?", exampleHy: "Լավ եմ, շնորհակալություն։ Իսկ դո՞ւ։" },
+    { french: "Et vous ?", armenian: "Իսկ դուք՞", exampleFr: "Ça va bien, et vous ?", exampleHy: "Լավ եմ, իսկ դո՞ւք։" },
+    { french: "Et toi ?", armenian: "Իսկ դու՞", exampleFr: "Ça va, et toi ?", exampleHy: "Լավ եմ, իսկ դո՞ւ։" },
+    { french: "Ça va comme ci, comme ça.", armenian: "Այսպես-այնպես", exampleFr: "Ça va comme ci, comme ça.", exampleHy: "Այսպես-այնպես է։" },
   ],
   rule: "Օգտագործեք «Et vous ?» աշխատավայրում կամ պաշտոնական շփման ժամանակ (հարգանքով «դուք»), իսկ «Et toi ?»՝ միայն մտերիմների հետ։",
   exercises: [
@@ -102,10 +103,10 @@ const fridayA1: DayLesson = {
   themeHy: "3-րդ օր․ Շնորհակալություն և ներողություն",
   level: "A1",
   expressions: [
-    { french: "Merci (beaucoup)", armenian: "Շնորհակալություն (շատ)", pronunciation: "մերսի բոկու", exampleFr: "Merci beaucoup pour votre aide.", exampleHy: "Շատ շնորհակալություն ձեր օգնության համար։" },
-    { french: "De rien / Avec plaisir", armenian: "Խնդրեմ / Սիրով", pronunciation: "դը ռյեն / ավեկ պլեզիր", exampleFr: "De rien, monsieur.", exampleHy: "Խնդրեմ, պարոն։" },
-    { french: "Pardon / Désolé(e)", armenian: "Ներողություն / ներողություն եմ խնդրում", pronunciation: "պարդոն / դեզոլե", exampleFr: "Pardon, je suis en retard.", exampleHy: "Ներողություն, ես ուշացել եմ։" },
-    { french: "Je vous en prie", armenian: "Խնդրեմ (պաշտոնական)", pronunciation: "ժը վուզ ան պրի", exampleFr: "Je vous en prie.", exampleHy: "Խնդրեմ։" },
+    { french: "Merci (beaucoup)", armenian: "Շնորհակալություն (շատ)", exampleFr: "Merci beaucoup pour votre aide.", exampleHy: "Շատ շնորհակալություն ձեր օգնության համար։" },
+    { french: "De rien / Avec plaisir", armenian: "Խնդրեմ / Սիրով", exampleFr: "De rien, monsieur.", exampleHy: "Խնդրեմ, պարոն։" },
+    { french: "Pardon / Désolé(e)", armenian: "Ներողություն / ներողություն եմ խնդրում", exampleFr: "Pardon, je suis en retard.", exampleHy: "Ներողություն, ես ուշացել եմ։" },
+    { french: "Je vous en prie", armenian: "Խնդրեմ (պաշտոնական)", exampleFr: "Je vous en prie.", exampleHy: "Խնդրեմ։" },
   ],
   rule: "Օգտագործեք «Désolé»-ն, եթե տղամարդ եք, և «Désolée»-ն՝ եթե կին եք։",
   exercises: [
@@ -252,6 +253,7 @@ export function getWeeklySchedule(level: Level): DayLesson[] {
 }
 
 export function getDayLesson(level: Level, day: string): DayLesson | undefined {
+  if (level === "A1") return getA1Lesson(day);
   return WEEKLY_SCHEDULE[level].find((d) => d.day === day);
 }
 

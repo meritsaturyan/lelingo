@@ -13,6 +13,9 @@ const typeLabels: Record<string, string> = {
   listening: "Լսել",
   dictation: "Թելադրություն",
   speaking: "Խոսել",
+  alphabet: "Այբուբեն",
+  combinations: "Համակցություններ",
+  reading: "Ընթերցանություն",
 };
 
 export function LessonCard({
@@ -24,6 +27,7 @@ export function LessonCard({
   variant = "blue",
   dayLabel,
   image,
+  locked,
 }: {
   href: string;
   title: string;
@@ -33,14 +37,15 @@ export function LessonCard({
   variant?: "blue" | "accent" | "white";
   dayLabel?: string;
   image?: string;
+  locked?: boolean;
 }) {
-  return (
-    <Link href={href} className="block group">
+  const inner = (
       <Card
         variant={variant}
         className={cn(
           "relative overflow-hidden transition-transform duration-300 group-hover:-translate-y-0.5 !p-0",
-          status === "upcoming" && "opacity-85"
+          status === "upcoming" && "opacity-85",
+          locked && "grayscale-[0.3]"
         )}
       >
         <div className="flex">
@@ -64,7 +69,7 @@ export function LessonCard({
               )}
               <div className="inline-flex items-center gap-2 mb-2">
                 <span className="h-7 w-7 rounded-full bg-white/70 flex items-center justify-center text-sm text-[#062B56]">
-                  {status === "completed" ? "✓" : status === "today" ? "→" : "○"}
+                  {locked ? "🔒" : status === "completed" ? "✓" : status === "today" ? "→" : "○"}
                 </span>
                 <span className="text-xs font-medium text-[#062B56]/70 bg-white/50 px-3 py-1 rounded-full">
                   {typeLabels[type] || type}
@@ -76,11 +81,20 @@ export function LessonCard({
               )}
             </div>
             <div className="h-10 w-10 rounded-full bg-white flex items-center justify-center text-[#062B56] shadow-sm group-hover:bg-[#FD7035] group-hover:text-white transition-colors shrink-0">
-              →
+              {locked ? "·" : "→"}
             </div>
           </div>
         </div>
       </Card>
+  );
+
+  if (locked) {
+    return <div className="block">{inner}</div>;
+  }
+
+  return (
+    <Link href={href} className="block group">
+      {inner}
     </Link>
   );
 }

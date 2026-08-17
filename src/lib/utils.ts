@@ -13,30 +13,37 @@ export function normalizeFrench(text: string): string {
     .trim();
 }
 
+/** Compare dictation ignoring punctuation (. , ? !) and accents. */
 export function compareDictation(
   expected: string,
   actual: string
 ): { score: number; mistakes: { expected: string; actual: string; index: number }[]; accentOnly: boolean } {
-  const expWords = expected.trim().split(/\s+/);
-  const actWords = actual.trim().split(/\s+/);
+  const stripPunct = (s: string) =>
+    s
+      .replace(/[.,!?;:…«»"""''()[\]{}]/g, " ")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const expWords = stripPunct(expected).split(/\s+/).filter(Boolean);
+  const actWords = stripPunct(actual).split(/\s+/).filter(Boolean);
   const mistakes: { expected: string; actual: string; index: number }[] = [];
-  let accentOnly = true;
   const maxLen = Math.max(expWords.length, actWords.length);
 
   for (let i = 0; i < maxLen; i++) {
     const e = expWords[i] ?? "";
     const a = actWords[i] ?? "";
-    if (e !== a) {
-      mistakes.push({ expected: e || "(բացակայում է)", actual: a || "(բացակայում է)", index: i });
-      if (normalizeFrench(e) !== normalizeFrench(a)) {
-        accentOnly = false;
-      }
+    if (normalizeFrench(e) !== normalizeFrench(a)) {
+      mistakes.push({
+        expected: e || "(բացակայում է)",
+        actual: a || "(բացակայում է)",
+        index: i,
+      });
     }
   }
 
   const correct = maxLen - mistakes.length;
   const score = maxLen === 0 ? 0 : Math.round((correct / maxLen) * 10);
-  return { score, mistakes, accentOnly: accentOnly && mistakes.length > 0 };
+  return { score, mistakes, accentOnly: false };
 }
 
 export function todayKey(): string {

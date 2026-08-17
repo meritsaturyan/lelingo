@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { LevelCard } from "@/components/ui/LevelCard";
 import { LEVELS } from "@/data/levels";
-import type { Level } from "@/lib/types";
+import type { LearningGoal, Level } from "@/lib/types";
 import { useProgress } from "@/lib/store";
 
 const features = [
@@ -20,8 +20,18 @@ const features = [
   { label: "Առաջընթացի հետևում" },
 ];
 
+const GOALS: { id: LearningGoal; titleHy: string; desc: string }[] = [
+  { id: "travel", titleHy: "Ճանապարհորդություն", desc: "Ճանապարհորդել, հյուրանոց, տրանսպորտ" },
+  { id: "business", titleHy: "Բիզնես", desc: "Աշխատանքային հանդիպումներ և նամակներ" },
+  { id: "study", titleHy: "Ուսում", desc: "Ուսում կամ քննություններ" },
+  { id: "culture", titleHy: "Մշակույթ", desc: "Ֆիլմեր, երաժշտություն, գրքեր" },
+  { id: "relocation", titleHy: "Տեղափոխություն", desc: "Ապրել ֆրանսախոս երկրում" },
+  { id: "other", titleHy: "Այլ", desc: "Անձնական հետաքրքրություն" },
+];
+
 export default function OnboardingPage() {
   const [step, setStep] = useState(0);
+  const [goal, setGoal] = useState<LearningGoal | null>(null);
   const [selected, setSelected] = useState<Level | null>(null);
   const { completeOnboarding } = useProgress();
   const router = useRouter();
@@ -67,22 +77,61 @@ export default function OnboardingPage() {
                 </div>
               ))}
             </div>
-            <div className="flex gap-3">
-              <Button className="flex-1" size="lg" onClick={() => setStep(1)}>
-                Սկսել
-              </Button>
-              <Button
-                size="icon"
-                variant="secondary"
-                className="h-14 w-14"
-                onClick={() => setStep(1)}
-                aria-label="Հաջորդ"
-              >
-                →
-              </Button>
-            </div>
+            <Button className="w-full" size="lg" onClick={() => setStep(1)}>
+              Սկսել
+            </Button>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (step === 1) {
+    return (
+      <div className="min-h-dvh px-5 py-8 pb-10 bg-[#C7E0E7]/30">
+        <div className="mb-4">
+          <Image src="/logo2.png" alt="Le Lingo" width={120} height={40} className="h-9 w-auto" />
+        </div>
+        <button
+          type="button"
+          onClick={() => setStep(0)}
+          className="text-[#062B56]/50 mb-4 text-sm"
+        >
+          ← Վերադառնալ
+        </button>
+        <h1 className="text-3xl font-extrabold text-[#062B56]">
+          Ի՞նչ նպատակով եք սովորում
+        </h1>
+        <p className="text-[#062B56]/60 mt-2 mb-6">
+          Սա կօգնի հարմարեցնել ձեր ուղին։
+        </p>
+
+        <div className="space-y-3 mb-6">
+          {GOALS.map((g) => (
+            <button
+              key={g.id}
+              type="button"
+              onClick={() => setGoal(g.id)}
+              className={`w-full text-left rounded-[24px] p-4 border transition-all ${
+                goal === g.id
+                  ? "border-[#FD7035] bg-[#FD7035]/10"
+                  : "border-[#062B56]/10 bg-white"
+              }`}
+            >
+              <p className="font-bold text-[#062B56]">{g.titleHy}</p>
+              <p className="text-sm text-[#062B56]/60 mt-1">{g.desc}</p>
+            </button>
+          ))}
+        </div>
+
+        <Button
+          className="w-full"
+          size="lg"
+          disabled={!goal}
+          onClick={() => setStep(2)}
+        >
+          Շարունակել
+        </Button>
       </div>
     );
   }
@@ -94,7 +143,7 @@ export default function OnboardingPage() {
       </div>
       <button
         type="button"
-        onClick={() => setStep(0)}
+        onClick={() => setStep(1)}
         className="text-[#062B56]/50 mb-4 text-sm"
       >
         ← Վերադառնալ
@@ -103,7 +152,7 @@ export default function OnboardingPage() {
         Ընտրե՛ք մակարդակը
       </h1>
       <p className="text-[#062B56]/60 mt-2 mb-6 animate-fade-up">
-        Կարող եք ընտրել ինքներդ կամ անցնել տեղադրման թեստ։
+        A1-ը նախատեսված է 1 ամսվա համար՝ 4 շաբաթով։
       </p>
 
       <div className="space-y-3 mb-6">
@@ -124,7 +173,7 @@ export default function OnboardingPage() {
           disabled={!selected}
           onClick={() => {
             if (!selected) return;
-            completeOnboarding(selected);
+            completeOnboarding(selected, undefined, goal);
             router.push("/dashboard");
           }}
         >

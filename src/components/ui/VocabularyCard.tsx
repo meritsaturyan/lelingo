@@ -20,9 +20,6 @@ export function VocabularyCard({
         <div>
           <h3 className="text-2xl font-bold text-[#062B56]">{item.french}</h3>
           <p className="text-[#062B56]/70 mt-1">{item.armenian}</p>
-          {item.pronunciation && (
-            <p className="text-xs text-[#062B56]/45 mt-1">[{item.pronunciation}]</p>
-          )}
         </div>
         <AudioIconButton text={item.french} />
       </div>

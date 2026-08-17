@@ -23,7 +23,6 @@ export function DictationExercise({
   const submit = () => {
     const r = compareDictation(text, answer);
     setResult(r);
-    onComplete?.(r.score);
   };
 
   return (
@@ -32,6 +31,9 @@ export function DictationExercise({
         <p className="text-sm font-medium text-[#062B56]/60 mb-1">Թելադրություն</p>
         <h3 className="text-xl font-bold text-[#062B56]">Լսե՛ք և գրե՛ք</h3>
         {hint && <p className="text-sm text-[#062B56]/50 mt-1">{hint}</p>}
+        <p className="text-xs text-[#062B56]/45 mt-2">
+          Կետը և ստորակետը պարտադիր չեն։
+        </p>
       </div>
 
       <AudioPlayer text={text} label="Լսել նախադասությունը" rate={0.85} />
@@ -81,19 +83,19 @@ export function DictationExercise({
                   «{m.actual}» → <strong>{m.expected}</strong>
                 </p>
               ))}
-              {result.accentOnly && (
-                <p className="text-sm text-[#062B56]/70 mt-2">
-                  Ուշադրություն՝ շեշտանիշները (accents) կարևոր են ֆրանսերենում։
-                  Բառերը ճիշտ էին, բայց accents-ը բացակայում էին։
-                </p>
-              )}
-              {!result.accentOnly && (
-                <p className="text-sm text-[#062B56]/70 mt-2">
-                  Ուշադիր լսե՛ք և համեմատե՛ք ուղղագրությունը ճիշտ պատասխանի հետ։
-                </p>
-              )}
+              <p className="text-sm text-[#062B56]/70 mt-2">
+                Ուշադիր լսե՛ք և համեմատե՛ք ուղղագրությունը ճիշտ պատասխանի հետ։
+              </p>
             </div>
           )}
+
+          <Button
+            className="w-full"
+            size="lg"
+            onClick={() => onComplete?.(result.score)}
+          >
+            Հաջորդ
+          </Button>
         </div>
       )}
     </Card>

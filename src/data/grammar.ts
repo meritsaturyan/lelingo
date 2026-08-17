@@ -103,7 +103,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     titleFr: "Poser une question",
     titleHy: "Հարցական նախադասություն",
     explanation:
-      "Ֆրանսերենում հարցը կարելի է կազմել 3 ձևով.\n\n1) Ինտոնացիա՝ Tu habites à Paris ?\n2) Est-ce que + sujet + verbe ?\nEst-ce que tu habites à Paris ?\n3) Ինվերսիա՝ Habites-tu à Paris ?\n\nԽոսակցական՝ Tu travailles ici ?\nՉեզոք/հեշտ՝ Est-ce que tu travailles ici ?\nՊաշտոնական՝ Travailles-tu ici ?",
+      "Ֆրանսերենում հարցը կարելի է կազմել 3 հիմնական ձևով.\n\n1. L'intonation — ձայնի ինտոնացիայով\nԿառուցվածքը չի փոխվում, ձայնի տոնը բարձրանում է։\nTu habites à Paris ?\nTu travailles ici ?\nՇատ տարածված է առօրյա խոսակցական ֆրանսերենում։\n\n2. Avec « est-ce que »\nEst-ce que + sujet + verbe ?\nEst-ce que tu habites à Paris ?\nEst-ce que-ից հետո՝ sujet + verbe\n❌ Est-ce que habites-tu à Paris ?\n✅ Est-ce que tu habites à Paris ?\n\n3. L'inversion\nVerbe + sujet ?\nHabites-tu à Paris ?\nTravaillez-vous ici ?\nAime-t-elle le français ?\nԱվելի պաշտոնական / գրավոր։\n\nՀամեմատություն՝\nTu travailles ici ? → խոսակցական\nEst-ce que tu travailles ici ? → չեզոք / ամենահեշտ\nTravailles-tu ici ? → պաշտոնական",
     rule: "intonation · est-ce que · inversion",
     examples: [
       { french: "Tu travailles ici ?", armenian: "Դու այստեղ աշխատո՞ւմ ես։ (խոսակցական)" },
@@ -181,7 +181,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     titleFr: "3e groupe — verbes irréguliers",
     titleHy: "Երրորդ խումբ",
     explanation:
-      "3-րդ խմբում մեկ ընդհանուր վերջավորություն չկա։\n\ndormir — Je dors, tu dors, il dort, nous dormons, vous dormez, ils dorment\nprendre — Je prends, tu prends, il prend, nous prenons, vous prenez, ils prennent\nfaire — Je fais, tu fais, il fait, nous faisons, vous faites, ils font\nvenir — Je viens, tu viens, il vient, nous venons, vous venez, ils viennent\nmettre — Je mets, tu mets, il met, nous mettons, vous mettez, ils mettent\nécrire — J'écris … Nous écrivons … Ils écrivent\ndire — Je dis … Vous dites … Ils disent\nboire — Je bois … Nous buvons … Ils boivent\nvoir — Je vois … Nous voyons … Ils voient\n\npouvoir — je peux · vouloir — je veux · devoir — je dois",
+      "3-րդ խմբում մեկ ընդհանուր վերջավորություն չկա։\n\nModèle 1 : s/s/t /ons/ez/ent\ndormir — Je dors, tu dors, il dort, nous dormons, vous dormez, ils dorment\n\nModèle 2 : -dre → -ds/-ds/-d/-ons/-ez/-nent\nprendre — Je prends, tu prends, il prend, nous prenons, vous prenez, ils prennent\n(apprendre, comprendre, reprendre)\n\nMettre → -s/-s/-/-ons/-ez/-ent\nJe mets, tu mets, il met, nous mettons, vous mettez, ils mettent\n\nVenir → -s/-s/-t/-ons/-ez/-nent\nJe viens, tu viens, il vient, nous venons, vous venez, ils viennent\n(devenir, revenir, tenir, obtenir)\n\nFaire — Je fais, tu fais, il fait, nous faisons, vous faites, ils font\nÉcrire — J'écris … Nous écrivons … Ils écrivent\nDire — Je dis … Vous dites (ոչ disez) … Ils disent\nBoire — Je bois … Nous buvons … Ils boivent\nVoir — Je vois … Nous voyons … Ils voient\n\nPouvoir — je peux · Vouloir — je veux · Devoir — je dois",
     rule: "3e groupe = formes irrégulières à apprendre",
     examples: [
       { french: "Je prends le train.", armenian: "Ես գնացք եմ նստում։" },

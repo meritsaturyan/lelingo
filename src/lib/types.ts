@@ -16,7 +16,18 @@ export type LessonType =
   | "listening"
   | "dictation"
   | "speaking"
-  | "weekly-test";
+  | "weekly-test"
+  | "alphabet"
+  | "combinations"
+  | "reading";
+
+export type LearningGoal =
+  | "travel"
+  | "business"
+  | "study"
+  | "culture"
+  | "relocation"
+  | "other";
 
 export type WordStatus = "new" | "learned" | "difficult" | "favorite";
 
@@ -88,7 +99,9 @@ export interface Exercise {
 }
 
 export interface DayLesson {
-  day: DayOfWeek;
+  id?: string;
+  week?: number;
+  day: DayOfWeek | string;
   dayLabelHy: string;
   dayLabelFr: string;
   type: LessonType;
@@ -104,7 +117,16 @@ export interface DayLesson {
   }[];
   rule?: string;
   grammarId?: string;
+  readingId?: string;
   exercises?: Exercise[];
+  locked?: boolean;
+}
+
+export interface MonthWeek {
+  week: number;
+  titleHy: string;
+  titleFr: string;
+  lessons: DayLesson[];
 }
 
 export interface PlacementQuestion {
@@ -160,6 +182,7 @@ export interface WeeklyTestSection {
 export interface UserProgress {
   onboardingComplete: boolean;
   level: Level | null;
+  learningGoal?: LearningGoal | null;
   name: string;
   xp: number;
   streak: number;
