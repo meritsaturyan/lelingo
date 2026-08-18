@@ -11,19 +11,29 @@ export function AudioPlayer({
   rate = 0.9,
   className,
   iconSrc,
+  onPlayingChange,
 }: {
   text: string;
   label?: string;
   rate?: number;
   className?: string;
   iconSrc?: string;
+  onPlayingChange?: (playing: boolean) => void;
 }) {
   const [playing, setPlaying] = useState(false);
 
+  const setPlay = (v: boolean) => {
+    setPlaying(v);
+    onPlayingChange?.(v);
+  };
+
   const play = async () => {
-    setPlaying(true);
-    await speakFrench(text, rate);
-    setPlaying(false);
+    setPlay(true);
+    try {
+      await speakFrench(text, rate);
+    } finally {
+      setPlay(false);
+    }
   };
 
   return (
@@ -32,7 +42,14 @@ export function AudioPlayer({
       variant="secondary"
       size="sm"
       className={className}
-      onClick={() => (playing ? stopSpeaking() : play())}
+      onClick={() => {
+        if (playing) {
+          stopSpeaking();
+          setPlay(false);
+        } else {
+          void play();
+        }
+      }}
       aria-label={label}
     >
       {iconSrc ? (

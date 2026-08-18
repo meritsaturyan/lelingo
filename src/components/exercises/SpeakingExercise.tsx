@@ -13,6 +13,7 @@ import { evaluateSpeaking } from "@/lib/utils";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
+import { SpeakingCroissant } from "@/components/ui/SpeakingCroissant";
 
 export function SpeakingExercise({
   prompt,
@@ -26,6 +27,7 @@ export function SpeakingExercise({
   const [supported, setSupported] = useState(true);
   const [micError, setMicError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
+  const [ttsSpeaking, setTtsSpeaking] = useState(false);
   const [result, setResult] = useState<ReturnType<typeof evaluateSpeaking> | null>(
     null
   );
@@ -144,15 +146,24 @@ export function SpeakingExercise({
 
   return (
     <Card className="space-y-4">
-      <div>
-        <span className="text-xs font-semibold uppercase tracking-wide text-[#062B56]/50">
-          {prompt.topicHy}
-        </span>
-        <h3 className="text-2xl font-bold text-[#062B56] mt-1">{prompt.promptFr}</h3>
-        <p className="text-[#062B56]/65 mt-1">{prompt.promptHy}</p>
+      <div className="flex items-start gap-3">
+        <SpeakingCroissant isSpeaking={ttsSpeaking} size={112} />
+        <div className="flex-1 min-w-0 space-y-2">
+          <div>
+            <span className="text-xs font-semibold uppercase tracking-wide text-[#062B56]/50">
+              {prompt.topicHy}
+            </span>
+            <h3 className="text-2xl font-bold text-[#062B56] mt-1">{prompt.promptFr}</h3>
+            <p className="text-[#062B56]/65 mt-1">{prompt.promptHy}</p>
+          </div>
+          <AudioPlayer
+            text={prompt.promptFr}
+            label="Լսել հարցը"
+            iconSrc="/speech.jpg"
+            onPlayingChange={setTtsSpeaking}
+          />
+        </div>
       </div>
-
-      <AudioPlayer text={prompt.promptFr} label="Լսել հարցը" iconSrc="/speech.jpg" />
 
       <p className="text-sm text-[#062B56]/55 bg-[#FAFAFA] rounded-2xl p-3">
         💡 {prompt.tipsHy}
