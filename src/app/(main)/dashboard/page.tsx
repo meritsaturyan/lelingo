@@ -9,15 +9,50 @@ import { LessonCard } from "@/components/ui/LessonCard";
 import { LevelProgressVideos } from "@/components/ui/LevelProgressVideos";
 import { AppHeader, lessonImage } from "@/components/layout/AppHeader";
 import { getWeeklySchedule } from "@/data/weekly";
+import { getA1Month, isWeekUnlocked } from "@/data/a1-month";
 import { getDayOfWeek } from "@/lib/utils";
-import type { Level } from "@/lib/types";
+import type { DayLesson, Level } from "@/lib/types";
+
+function lessonHref(day: DayLesson) {
+  const key = day.id || String(day.day);
+  if (day.type === "weekly-test") return `/weekly-test?lesson=${key}`;
+  if (day.type === "grammar") return `/grammar/${day.grammarId}?lesson=${key}`;
+  return `/learn/${key}`;
+}
+
+/** Next open A1 lesson from the month plan (not calendar weekday). */
+function getA1DashboardLesson(
+  weeklyCompleted: Record<string, boolean>
+): DayLesson | undefined {
+  const months = getA1Month();
+  for (const week of months) {
+    if (!isWeekUnlocked(week.week, weeklyCompleted, "A1")) continue;
+    for (const lesson of week.lessons) {
+      if (!weeklyCompleted[`A1-${lesson.id}`]) return lesson;
+    }
+  }
+  // All done — show last lesson
+  const lastWeek = months[months.length - 1];
+  return lastWeek?.lessons[lastWeek.lessons.length - 1];
+}
 
 export default function DashboardPage() {
   const { progress } = useProgress();
   const level = (progress.level || "A1") as Level;
-  const schedule = getWeeklySchedule(level);
   const todayIdx = getDayOfWeek();
-  const todayLesson = schedule[todayIdx];
+
+  const todayLesson: DayLesson | undefined =
+    level === "A1"
+      ? getA1DashboardLesson(progress.weeklyCompleted)
+      : getWeeklySchedule(level)[todayIdx];
+
+  const imageIdx =
+    level === "A1" && todayLesson?.week
+      ? (todayLesson.week - 1) * 8 +
+        (getA1Month()
+          .find((w) => w.week === todayLesson.week)
+          ?.lessons.findIndex((l) => l.id === todayLesson.id) ?? 0)
+      : todayIdx;
 
   return (
     <div className="px-5 pt-5 pb-4 space-y-5">
@@ -31,26 +66,20 @@ export default function DashboardPage() {
       {todayLesson && (
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold text-[#062B56]">Այսօր</h2>
+            <h2 className="text-xl font-bold text-[#062B56]">Հաջորդ դաս</h2>
             <Link href="/learn" className="text-sm font-semibold text-[#FD7035]">
-              Ամբողջ շաբաթ →
+              Ամբողջ ծրագիր →
             </Link>
           </div>
           <LessonCard
-            href={
-              todayLesson.type === "weekly-test"
-                ? "/weekly-test"
-                : todayLesson.type === "grammar"
-                  ? `/grammar/${todayLesson.grammarId}`
-                  : `/learn/${todayLesson.day}`
-            }
+            href={lessonHref(todayLesson)}
             title={todayLesson.themeHy}
             subtitle={todayLesson.themeFr}
             type={todayLesson.type}
             status="today"
             variant="blue"
-            dayLabel={todayLesson.dayLabelHy}
-            image={lessonImage(todayIdx)}
+            dayLabel={`${todayLesson.dayLabelHy} · ${todayLesson.dayLabelFr}`}
+            image={lessonImage(imageIdx)}
           />
         </div>
       )}
