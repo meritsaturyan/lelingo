@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 const tabs = [
   { href: "/dashboard", label: "Գլխավոր", icon: "/glxavor.jpg" },
   { href: "/learn", label: "Սովորել", icon: "/sovorel.jpg" },
-  { href: "/listen", label: "Լսել", icon: "/lsel.jpg" },
+  { href: "/listen", label: "Լսել", icon: "/listen-icon.png" },
   { href: "/speak", label: "Խոսել", icon: "/xosel.jpg" },
   { href: "/progress", label: "Առաջընթաց", icon: "/arajyntac.jpg" },
 ];

@@ -159,7 +159,6 @@ export function SpeakingExercise({
           <AudioPlayer
             text={prompt.promptFr}
             label="Լսել հարցը"
-            iconSrc="/speech.jpg"
             onPlayingChange={setTtsSpeaking}
           />
         </div>

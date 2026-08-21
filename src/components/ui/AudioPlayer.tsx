@@ -5,12 +5,14 @@ import { speakFrench, stopSpeaking } from "@/lib/tts";
 import { useState } from "react";
 import { Button } from "./Button";
 
+const LISTEN_ICON = "/listen-icon.png";
+
 export function AudioPlayer({
   text,
   label = "Լսել",
   rate = 0.9,
   className,
-  iconSrc,
+  iconSrc = LISTEN_ICON,
   onPlayingChange,
 }: {
   text: string;
@@ -52,17 +54,13 @@ export function AudioPlayer({
       }}
       aria-label={label}
     >
-      {iconSrc ? (
-        <Image
-          src={iconSrc}
-          alt=""
-          width={22}
-          height={22}
-          className="h-[22px] w-[22px] rounded-full object-cover"
-        />
-      ) : (
-        <span className="text-base">{playing ? "⏹" : "🔊"}</span>
-      )}
+      <Image
+        src={playing ? LISTEN_ICON : iconSrc}
+        alt=""
+        width={22}
+        height={22}
+        className={`h-[22px] w-[22px] object-contain ${playing ? "animate-soft-pulse" : ""}`}
+      />
       <span>{playing ? "Կանգնեցնել" : label}</span>
     </Button>
   );
@@ -88,7 +86,13 @@ export function AudioIconButton({
       className="h-10 w-10 rounded-full bg-white/80 text-[#062B56] flex items-center justify-center shadow-sm hover:scale-105 transition-transform"
       aria-label="Լսել"
     >
-      {playing ? "⏹" : "🔊"}
+      <Image
+        src={LISTEN_ICON}
+        alt=""
+        width={24}
+        height={24}
+        className={`h-6 w-6 object-contain ${playing ? "animate-soft-pulse" : ""}`}
+      />
     </button>
   );
 }
