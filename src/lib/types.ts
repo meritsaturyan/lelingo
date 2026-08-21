@@ -184,6 +184,9 @@ export interface UserProgress {
   level: Level | null;
   learningGoal?: LearningGoal | null;
   name: string;
+  firstName?: string;
+  lastName?: string;
+  avatarUrl?: string | null;
   xp: number;
   streak: number;
   lastActiveDate: string | null;

@@ -18,6 +18,9 @@ const defaultProgress: UserProgress = {
   level: null,
   learningGoal: null,
   name: "Ալեքս",
+  firstName: "Ալեքս",
+  lastName: "",
+  avatarUrl: null,
   xp: 0,
   streak: 0,
   lastActiveDate: null,
@@ -44,7 +47,13 @@ function loadProgress(): UserProgress {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultProgress;
-    return { ...defaultProgress, ...JSON.parse(raw) };
+    const parsed = { ...defaultProgress, ...JSON.parse(raw) } as UserProgress;
+    if (!parsed.firstName && parsed.name) {
+      const parts = parsed.name.trim().split(/\s+/);
+      parsed.firstName = parts[0] || "Ալեքս";
+      parsed.lastName = parts.slice(1).join(" ");
+    }
+    return parsed;
   } catch {
     return defaultProgress;
   }
@@ -70,6 +79,11 @@ type Store = {
   recordSpeaking: (score: number) => void;
   touchActivity: () => void;
   resetAll: () => void;
+  updateProfile: (data: {
+    firstName?: string;
+    lastName?: string;
+    avatarUrl?: string | null;
+  }) => void;
 };
 
 const ProgressContext = createContext<Store | null>(null);
@@ -284,6 +298,31 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
     localStorage.removeItem(STORAGE_KEY);
   }, []);
 
+  const updateProfile = useCallback(
+    (data: {
+      firstName?: string;
+      lastName?: string;
+      avatarUrl?: string | null;
+    }) => {
+      setProgress((prev) => {
+        const firstName =
+          data.firstName !== undefined ? data.firstName : prev.firstName || "";
+        const lastName =
+          data.lastName !== undefined ? data.lastName : prev.lastName || "";
+        const name = [firstName, lastName].filter(Boolean).join(" ") || prev.name;
+        return {
+          ...prev,
+          firstName,
+          lastName,
+          name,
+          avatarUrl:
+            data.avatarUrl !== undefined ? data.avatarUrl : prev.avatarUrl,
+        };
+      });
+    },
+    []
+  );
+
   const value = useMemo(
     () => ({
       progress,
@@ -300,6 +339,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       recordSpeaking,
       touchActivity,
       resetAll,
+      updateProfile,
     }),
     [
       progress,
@@ -316,6 +356,7 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
       recordSpeaking,
       touchActivity,
       resetAll,
+      updateProfile,
     ]
   );
 
