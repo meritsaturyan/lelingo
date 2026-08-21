@@ -38,10 +38,10 @@ export default function LearnPage() {
         <AppHeader showSettings />
 
         <div>
-          <p className="text-sm text-[#062B56]/50">A1 · 1 ամիս</p>
-          <h1 className="text-3xl font-extrabold text-[#062B56]">Ամսվա ծրագիր</h1>
+          <p className="text-sm text-[#062B56]/50">A1 · ծրագիր</p>
+          <h1 className="text-3xl font-extrabold text-[#062B56]">A1 ուսումնական ծրագիր</h1>
           <p className="text-[#062B56]/60 mt-1">
-            Ավարտե՛ք շաբաթը՝ հաջորդը բացելու համար։
+            Մոտ 5–6 շաբաթ · ավարտե՛ք շաբաթը՝ հաջորդը բացելու համար։
           </p>
         </div>
 

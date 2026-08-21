@@ -61,21 +61,32 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
   {
     id: "a1-articles",
     level: "A1",
-    titleFr: "Les articles",
-    titleHy: "Հոդեր",
+    titleFr: "Les articles définis",
+    titleHy: "Որոշակի հոդեր",
     explanation:
-      "un → մի / արական\nune → մի / իգական\ndes → մի քանի\nle → -ը / արական\nla → -ը / իգական\nles → -ները",
-    rule: "un/une/des (անորոշ) · le/la/les (որոշակի)",
+      "Որոշակի հոդերը (articles définis) ցույց են տալիս հայտնի, կոնկրետ իր։\n\nՀայերենում հաճախ համապատասխանում են «-ը / -ն» վերջավորությանը։\n\nՕրինակ՝ le livre = գիրքը (կոնկրետ գիրքը)։",
+    rule: "le (m.) · la (f.) · l' (voyelle) · les (pluriel)",
+    tables: [
+      {
+        title: "Articles définis",
+        headers: ["Article", "Օրինակ", "Հայերեն"],
+        rows: [
+          ["le", "le livre", "գիրքը"],
+          ["la", "la table", "սեղանը"],
+          ["l'", "l'école", "դպրոցը"],
+          ["les", "les livres", "գրքերը"],
+        ],
+        noteHy: "le / la → l' ձայնավորից կամ թույլ h-ից առաջ։",
+      },
+    ],
     examples: [
-      { french: "un livre", armenian: "մի գիրք" },
-      { french: "une maison", armenian: "մի տուն" },
-      { french: "le livre", armenian: "գիրքը" },
-      { french: "la maison", armenian: "տունը" },
-      { french: "les livres", armenian: "գրքերը" },
+      { french: "Le livre est sur la table.", armenian: "Գիրքը սեղանի վրա է։" },
+      { french: "L'école est grande.", armenian: "Դպրոցը մեծ է։" },
+      { french: "Les enfants jouent.", armenian: "Երեխաները խաղում են։" },
     ],
     exercises: [
       mc("ar1", "___ maison (իգական որոշակի)", ["le", "la", "les", "un"], "la", "Maison-ը իգական է՝ la։"),
-      mc("ar2", "___ livre (արական անորոշ)", ["une", "un", "la", "les"], "un", "Un livre = մի գիրք։"),
+      mc("ar2", "___ école (ձայնավորից առաջ)", ["le", "la", "l'", "les"], "l'", "Ձայնավորից առաջ՝ l'։"),
       mc("ar3", "___ livres (հոգնակի որոշակի)", ["le", "la", "les", "une"], "les", "Les = հոգնակի որոշակի։"),
     ],
   },
@@ -85,7 +96,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     titleFr: "La négation",
     titleHy: "Ժխտական ձև",
     explanation:
-      "Ֆրանսերենում հիմնական ժխտական կառուցվածքն է՝ ne + verbe + pas։\n\nԵթե բայը սկսվում է ձայնավորով՝ ne → n'։\nJe n'aime pas.\nJe n'habite pas à Paris.",
+      "Ֆրանսերենում հիմնական ժխտական կառուցվածքն է՝ ne + verbe + pas։\n\nԵթե բայը սկսվում է ձայնավորով՝ ne → n'։\nJe n'aime pas.\nJe n'habite pas à Paris.\n\nՀիմնական օրինակներ՝\nJe parle. → Je ne parle pas.\nIl travaille. → Il ne travaille pas.",
     rule: "ne + verbe + pas · devant voyelle : n'",
     examples: [
       { french: "Je parle.", armenian: "Ես խոսում եմ։" },
@@ -95,6 +106,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     exercises: [
       mc("ng1", "Ժխտական ձևը՝", ["ne … pas", "pas … ne", "no … pas", "non …"], "ne … pas", "ne + verbe + pas"),
       mc("ng2", "Je ___ aime ___ le thé. (ժխտում)", ["ne / pas", "n' / pas", "pas / ne", "no / pas"], "n' / pas", "Ձայնավորից առաջ՝ n'aime pas։"),
+      mc("ng3", "Tu ___ travailles ___ ici.", ["ne / pas", "n' / pas", "pas / ne", "no / pas"], "ne / pas", "Tu ne travailles pas…"),
     ],
   },
   {
@@ -181,20 +193,269 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     titleFr: "3e groupe — verbes irréguliers",
     titleHy: "Երրորդ խումբ",
     explanation:
-      "3-րդ խմբում մեկ ընդհանուր վերջավորություն չկա։\n\nModèle 1 : s/s/t /ons/ez/ent\ndormir — Je dors, tu dors, il dort, nous dormons, vous dormez, ils dorment\n\nModèle 2 : -dre → -ds/-ds/-d/-ons/-ez/-nent\nprendre — Je prends, tu prends, il prend, nous prenons, vous prenez, ils prennent\n(apprendre, comprendre, reprendre)\n\nMettre → -s/-s/-/-ons/-ez/-ent\nJe mets, tu mets, il met, nous mettons, vous mettez, ils mettent\n\nVenir → -s/-s/-t/-ons/-ez/-nent\nJe viens, tu viens, il vient, nous venons, vous venez, ils viennent\n(devenir, revenir, tenir, obtenir)\n\nFaire — Je fais, tu fais, il fait, nous faisons, vous faites, ils font\nÉcrire — J'écris … Nous écrivons … Ils écrivent\nDire — Je dis … Vous dites (ոչ disez) … Ils disent\nBoire — Je bois … Nous buvons … Ils boivent\nVoir — Je vois … Nous voyons … Ils voient\n\nPouvoir — je peux · Vouloir — je veux · Devoir — je dois",
+      "3-րդ խմբում մեկ ընդհանուր վերջավորություն չկա, բայց կան մի քանի կարևոր մոդելներ։\n\nԱյս դասում սովորում ենք՝\n• ընդհանուր տիպեր (terminaisons)\n• PARTIR (և նման բայեր)\n• PRENDRE\n• POUVOIR\n• OUVRIR",
     rule: "3e groupe = formes irrégulières à apprendre",
+    tables: [
+      {
+        title: "Type / Terminaisons",
+        headers: ["Type", "Terminaisons"],
+        rows: [
+          ["3e général", "-s, -s, -t, -ons, -ez, -ent"],
+          ["-dre", "-ds, -ds, -d, -ons, -ez, -ent"],
+          ["pouvoir / vouloir", "-x, -x, -t, -ons, -ez, -ent"],
+          ["ouvrir / offrir", "-e, -es, -e, -ons, -ez, -ent"],
+        ],
+      },
+      {
+        title: "PARTIR",
+        headers: ["Sujet", "Forme"],
+        rows: [
+          ["Je", "pars"],
+          ["Tu", "pars"],
+          ["Il / Elle", "part"],
+          ["Nous", "partons"],
+          ["Vous", "partez"],
+          ["Ils / Elles", "partent"],
+        ],
+        noteHy: "Նույն մոդելը՝ sortir, dormir, servir։",
+      },
+      {
+        title: "PRENDRE",
+        headers: ["Sujet", "Forme"],
+        rows: [
+          ["Je", "prends"],
+          ["Tu", "prends"],
+          ["Il / Elle", "prend"],
+          ["Nous", "prenons"],
+          ["Vous", "prenez"],
+          ["Ils / Elles", "prennent"],
+        ],
+      },
+      {
+        title: "POUVOIR",
+        headers: ["Sujet", "Forme", "Հայերեն"],
+        rows: [
+          ["Je", "peux", "ես կարող եմ"],
+          ["Tu", "peux", "դու կարող ես"],
+          ["Il / Elle", "peut", "նա կարող է"],
+          ["Nous", "pouvons", "մենք կարող ենք"],
+          ["Vous", "pouvez", "դուք կարող եք"],
+          ["Ils / Elles", "peuvent", "նրանք կարող են"],
+        ],
+      },
+      {
+        title: "OUVRIR",
+        headers: ["Sujet", "Forme", "Հայերեն"],
+        rows: [
+          ["Je", "ouvre", "ես բացում եմ"],
+          ["Tu", "ouvres", "դու բացում ես"],
+          ["Il / Elle", "ouvre", "նա բացում է"],
+          ["Nous", "ouvrons", "մենք բացում ենք"],
+          ["Vous", "ouvrez", "դուք բացում եք"],
+          ["Ils / Elles", "ouvrent", "նրանք բացում են"],
+        ],
+        noteHy: "Présent-ում conjugue-վում է ինչպես 1er groupe, բայց բայը 3e groupe է։",
+      },
+    ],
     examples: [
+      { french: "Je pars demain.", armenian: "Ես վաղը մեկնում եմ։" },
       { french: "Je prends le train.", armenian: "Ես գնացք եմ նստում։" },
-      { french: "Nous faisons un exercice.", armenian: "Մենք վարժություն ենք անում։" },
       { french: "Je peux parler français.", armenian: "Ես կարող եմ ֆրանսերեն խոսել։" },
-      { french: "Je veux un café.", armenian: "Ես սուրճ եմ ուզում։" },
-      { french: "Je dois étudier.", armenian: "Ես պարտավոր եմ սովորել։" },
+      { french: "J'ouvre la porte.", armenian: "Ես բացում եմ դուռը։" },
     ],
     exercises: [
-      mc("irr1", "Nous ___ (faire)", ["faisons", "faites", "font", "fais"], "faisons", "Nous faisons"),
-      mc("irr2", "Ils ___ (prendre)", ["prennent", "prend", "prenez", "prenons"], "prennent", "Ils prennent"),
-      mc("irr3", "Vous ___ (dire)", ["dites", "disez", "disent", "dis"], "dites", "Vous dites (ոչ disez)"),
-      mc("irr4", "Je ___ (pouvoir)", ["peux", "peut", "pouvons", "pouvoir"], "peux", "Je peux"),
+      mc("irr1", "Je ___ (pouvoir)", ["peux", "peut", "pouvons", "pouvoir"], "peux", "Je peux"),
+      mc("irr2", "Tu ___ la fenêtre. (ouvrir)", ["ouvre", "ouvres", "ouvrons", "ouvrez"], "ouvres", "Tu ouvres"),
+      mc("irr3", "Je ___ demain. (partir)", ["pars", "part", "partons", "partez"], "pars", "Je pars"),
+      mc("irr4", "Tu ___ le bus. (prendre)", ["prends", "prend", "prenez", "prennent"], "prends", "Tu prends"),
+    ],
+  },
+  {
+    id: "a1-articles-indef",
+    level: "A1",
+    titleFr: "Les articles indéfinis",
+    titleHy: "Անորոշ հոդեր",
+    explanation:
+      "Անորոշ հոդերը (articles indéfinis) ցույց են տալիս ոչ կոնկրետ, առաջին անգամ նշված իր։\n\nՀայերենում հաճախ համապատասխանում են «մի» բառին կամ ընդհանուր հոգնակիին։",
+    rule: "un (m.) · une (f.) · des (pluriel)",
+    tables: [
+      {
+        title: "Articles indéfinis",
+        headers: ["Article", "Օրինակ", "Հայերեն"],
+        rows: [
+          ["un", "un livre", "մի գիրք"],
+          ["une", "une voiture", "մի մեքենա"],
+          ["des", "des livres", "գրքեր"],
+        ],
+      },
+    ],
+    examples: [
+      { french: "J'ai un livre.", armenian: "Ես ունեմ մի գիրք։" },
+      { french: "Elle a une voiture.", armenian: "Նա ունի մի մեքենա։" },
+      { french: "Nous avons des amis.", armenian: "Մենք ունենք ընկերներ։" },
+    ],
+    exercises: [
+      mc("ai1", "___ livre (արական անորոշ)", ["un", "une", "le", "des"], "un", "Un livre = մի գիրք։"),
+      mc("ai2", "___ voiture (իգական անորոշ)", ["un", "une", "la", "des"], "une", "Une voiture = մի մեքենա։"),
+      mc("ai3", "___ livres (հոգնակի անորոշ)", ["un", "une", "les", "des"], "des", "Des = հոգնակի անորոշ։"),
+    ],
+  },
+  {
+    id: "a1-articles-part",
+    level: "A1",
+    titleFr: "Les articles partitifs",
+    titleHy: "Մասնատող հոդեր",
+    explanation:
+      "Partitifs-ը օգտագործվում է չհաշվելի քանակի համար՝ սնունդ, ըմպելիք, նյութ։\n\ndu / de la / de l' / des\n\nԿարևոր տարբերություն՝\n• aimer + défini → ընդհանուր սեր / նախասիրություն\n• manger + partitif → որոշ քանակ\n\nՕրինակ՝\nJe mange du chocolat. (որոշ շոկոլադ եմ ուտում)\nJ'aime le chocolat. (սիրում եմ շոկոլադը ընդհանրապես)\n\nԲայեր՝ aimer, adorer, détester, préférer, apprécier → սովորաբար défini։",
+    rule: "du · de la · de l' · des — չհաշվելի քանակ",
+    tables: [
+      {
+        title: "Articles partitifs",
+        headers: ["Article", "Օրինակ", "Հայերեն"],
+        rows: [
+          ["du", "du pain", "հաց (որոշ քանակ)"],
+          ["de la", "de la confiture", "մուրաբա"],
+          ["de l'", "de l'eau", "ջուր"],
+          ["des", "des légumes", "բանջարեղեն"],
+        ],
+      },
+    ],
+    examples: [
+      { french: "Je mange du chocolat.", armenian: "Ես շոկոլադ եմ ուտում։" },
+      { french: "J'aime le chocolat.", armenian: "Ես սիրում եմ շոկոլադը։" },
+      { french: "Je bois de l'eau.", armenian: "Ես ջուր եմ խմում։" },
+    ],
+    exercises: [
+      mc("ap1", "Je mange ___ pain.", ["du", "le", "un", "la"], "du", "Manger + partitif։"),
+      mc("ap2", "J'aime ___ chocolat.", ["du", "le", "de la", "un"], "le", "Aimer + défini։"),
+      mc("ap3", "Je bois ___ eau.", ["du", "de la", "de l'", "des"], "de l'", "Eau-ն սկսվում է ձայնավորով՝ de l'։"),
+    ],
+  },
+  {
+    id: "a1-articles-neg",
+    level: "A1",
+    titleFr: "Les articles dans la négation",
+    titleHy: "Հոդերը ժխտականում",
+    explanation:
+      "Ժխտականում անորոշ և մասնատող հոդերը դառնում են de / d'։\n\nun / une / des / du / de la / de l' → de / d'\n\nԲայց որոշակի հոդերը (le / la / l' / les) չեն փոխվում։\n\nՕրինակներ՝\nJ'ai un livre. → Je n'ai pas de livre.\nJe mange du pain. → Je ne mange pas de pain.\nJ'aime le café. → Je n'aime pas le café.",
+    rule: "indéfinis / partitifs → de/d' · définis restent",
+    tables: [
+      {
+        title: "Հոդերը ժխտականում",
+        headers: ["Դրական", "Ժխտական"],
+        rows: [
+          ["un / une / des", "de / d'"],
+          ["du / de la / de l'", "de / d'"],
+          ["le / la / l' / les", "le / la / l' / les (չեն փոխվում)"],
+        ],
+      },
+    ],
+    examples: [
+      { french: "Je n'ai pas de livre.", armenian: "Ես գիրք չունեմ։" },
+      { french: "Je ne mange pas de pain.", armenian: "Ես հաց չեմ ուտում։" },
+      { french: "Je n'aime pas le café.", armenian: "Ես չեմ սիրում սուրճը։" },
+    ],
+    exercises: [
+      mc("an1", "Je n'ai pas ___ voiture.", ["une", "de", "la", "des"], "de", "un/une → de ժխտականում։"),
+      mc("an2", "Je ne mange pas ___ pain.", ["du", "de", "le", "un"], "de", "du → de ժխտականում։"),
+      mc("an3", "Je n'aime pas ___ café.", ["de", "du", "le", "un"], "le", "Défini-ն չի փոխվում։"),
+    ],
+  },
+  {
+    id: "a1-quantite",
+    level: "A1",
+    titleFr: "Après une quantité",
+    titleHy: "Քանակից հետո",
+    explanation:
+      "Քանակ արտահայտող բառերից հետո օգտագործվում է de / d' (ոչ թե du / des)։\n\nbeaucoup de · peu de · assez de · trop de · un peu de\nձայնավորից առաջ՝ beaucoup d'\n\nՕրինակ՝\nbeaucoup de livres\nbeaucoup d'amis\nun peu de sucre",
+    rule: "quantité + de / d'",
+    tables: [
+      {
+        title: "Expressions de quantité",
+        headers: ["Expression", "Օրինակ", "Հայերեն"],
+        rows: [
+          ["beaucoup de", "beaucoup de livres", "շատ գրքեր"],
+          ["peu de", "peu de temps", "քիչ ժամանակ"],
+          ["assez de", "assez de travail", "բավական աշխատանք"],
+          ["trop de", "trop de bruit", "շատ աղմուկ"],
+          ["un peu de", "un peu de sucre", "մի քիչ շաքար"],
+          ["beaucoup d'", "beaucoup d'amis", "շատ ընկերներ"],
+        ],
+      },
+    ],
+    examples: [
+      { french: "J'ai beaucoup de livres.", armenian: "Ես շատ գրքեր ունեմ։" },
+      { french: "Il y a peu de temps.", armenian: "Քիչ ժամանակ կա։" },
+      { french: "Nous avons beaucoup d'amis.", armenian: "Մենք շատ ընկերներ ունենք։" },
+    ],
+    exercises: [
+      mc("qt1", "beaucoup ___ livres", ["de", "des", "du", "les"], "de", "Quantité + de։"),
+      mc("qt2", "beaucoup ___ amis", ["de", "d'", "des", "du"], "d'", "Ձայնավորից առաջ՝ d'։"),
+      mc("qt3", "un peu ___ sucre", ["de", "du", "des", "le"], "de", "un peu de…"),
+    ],
+  },
+  {
+    id: "a1-contraction-a",
+    level: "A1",
+    titleFr: "Articles contractés avec à",
+    titleHy: "Կրճատումներ՝ à-ով",
+    explanation:
+      "À + որոշակի հոդ կարող է կրճատվել։\n\nԱյս ձևերը հաճախ են հանդիպում aller / être + տեղ անունով։",
+    rule: "à + le → au · à + les → aux",
+    tables: [
+      {
+        title: "à + article",
+        headers: ["Combinaison", "Résultat"],
+        rows: [
+          ["à + le", "AU"],
+          ["à + les", "AUX"],
+          ["à + la", "À LA"],
+          ["à + l'", "À L'"],
+        ],
+      },
+    ],
+    examples: [
+      { french: "Je vais au cinéma.", armenian: "Ես գնում եմ կինո։" },
+      { french: "Elle est à la maison.", armenian: "Նա տանն է։" },
+      { french: "Nous allons à l'école.", armenian: "Մենք գնում ենք դպրոց։" },
+      { french: "Ils vont aux magasins.", armenian: "Նրանք գնում են խանութներ։" },
+    ],
+    exercises: [
+      mc("ca1", "à + le = ", ["au", "aux", "du", "à le"], "au", "à + le → au"),
+      mc("ca2", "Je vais ___ cinéma.", ["au", "à la", "à le", "du"], "au", "cinéma = արական՝ au"),
+      mc("ca3", "Elle va ___ école.", ["au", "à la", "à l'", "aux"], "à l'", "école-ը սկսվում է ձայնավորով։"),
+    ],
+  },
+  {
+    id: "a1-contraction-de",
+    level: "A1",
+    titleFr: "Articles contractés avec de",
+    titleHy: "Կրճատումներ՝ de-ով",
+    explanation:
+      "De + որոշակի հոդ կարող է կրճատվել։\n\nՀաճախ օգտագործվում է venir / sortir + տեղ։\n\nՀամեմատե՛ք՝\nJe vais au cinéma. (գնում եմ)\nJe viens du cinéma. (գալիս եմ)",
+    rule: "de + le → du · de + les → des",
+    tables: [
+      {
+        title: "de + article",
+        headers: ["Combinaison", "Résultat"],
+        rows: [
+          ["de + le", "DU"],
+          ["de + les", "DES"],
+          ["de + la", "DE LA"],
+          ["de + l'", "DE L'"],
+        ],
+      },
+    ],
+    examples: [
+      { french: "Je viens du cinéma.", armenian: "Ես գալիս եմ կինոյից։" },
+      { french: "Elle sort de la maison.", armenian: "Նա դուրս է գալիս տնից։" },
+      { french: "Nous venons de l'école.", armenian: "Մենք գալիս ենք դպրոցից։" },
+      { french: "Ils sortent des magasins.", armenian: "Նրանք դուրս են գալիս խանութներից։" },
+    ],
+    exercises: [
+      mc("cd1", "de + le = ", ["du", "des", "au", "de le"], "du", "de + le → du"),
+      mc("cd2", "Je viens ___ cinéma.", ["du", "au", "de le", "des"], "du", "venir + du"),
+      mc("cd3", "Je vais ___ cinéma / Je viens ___ cinéma.", ["au / du", "du / au", "à / de", "au / au"], "au / du", "aller → au, venir → du"),
     ],
   },
 ];

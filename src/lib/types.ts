@@ -82,6 +82,12 @@ export interface GrammarLesson {
     french: string;
     armenian: string;
   }[];
+  tables?: {
+    title: string;
+    headers: string[];
+    rows: string[][];
+    noteHy?: string;
+  }[];
   exercises: Exercise[];
 }
 

@@ -65,6 +65,64 @@ function ConjugationTable({
   );
 }
 
+function GrammarTable({
+  title,
+  headers,
+  rows,
+  noteHy,
+}: {
+  title: string;
+  headers: string[];
+  rows: string[][];
+  noteHy?: string;
+}) {
+  return (
+    <Card className="!p-0 overflow-hidden">
+      <div className="px-4 py-3 bg-[#C7E0E7]">
+        <p className="font-bold text-[#062B56]">{title}</p>
+      </div>
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-[#062B56]/10 text-left">
+              {headers.map((h) => (
+                <th key={h} className="px-4 py-2 text-[#062B56]/60 font-semibold">
+                  {h}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r, i) => (
+              <tr key={`${r[0]}-${i}`} className="border-b border-[#062B56]/05 last:border-0">
+                {r.map((cell, j) => (
+                  <td
+                    key={`${i}-${j}`}
+                    className={
+                      j === 0
+                        ? "px-4 py-2.5 font-medium text-[#062B56]"
+                        : j === 1
+                          ? "px-4 py-2.5 text-[#FD7035] font-semibold"
+                          : "px-4 py-2.5 text-[#062B56]"
+                    }
+                  >
+                    {cell}
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {noteHy && (
+        <p className="px-4 py-3 text-sm text-[#062B56]/70 border-t border-[#062B56]/05">
+          {noteHy}
+        </p>
+      )}
+    </Card>
+  );
+}
+
 function GrammarInner({ id }: { id: string }) {
   const searchParams = useSearchParams();
   const lessonKey = searchParams.get("lesson");
@@ -93,6 +151,12 @@ function GrammarInner({ id }: { id: string }) {
     "a1-er-verbs": "w3-er",
     "a1-ir-verbs": "w4-ir",
     "a1-irregular": "w4-irr",
+    "a1-articles-indef": "w5-articles-indef",
+    "a1-articles-part": "w5-articles-part",
+    "a1-articles-neg": "w5-articles-neg",
+    "a1-quantite": "w5-quantite",
+    "a1-contraction-a": "w6-contraction-a",
+    "a1-contraction-de": "w6-contraction-de",
   };
 
   const finish = () => {
@@ -153,6 +217,16 @@ function GrammarInner({ id }: { id: string }) {
             <p className="text-sm font-semibold text-[#062B56]/60 mb-1">Կանոն</p>
             <p className="text-[#062B56] font-medium whitespace-pre-line">{lesson.rule}</p>
           </Card>
+
+          {lesson.tables?.map((t) => (
+            <GrammarTable
+              key={t.title}
+              title={t.title}
+              headers={t.headers}
+              rows={t.rows}
+              noteHy={t.noteHy}
+            />
+          ))}
 
           {lesson.id === "a1-er-verbs" && (
             <ConjugationTable
