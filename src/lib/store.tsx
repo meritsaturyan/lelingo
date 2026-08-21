@@ -67,7 +67,12 @@ function saveProgress(p: UserProgress) {
 type Store = {
   progress: UserProgress;
   hydrated: boolean;
-  completeOnboarding: (level: Level, name?: string, goal?: UserProgress["learningGoal"]) => void;
+  completeOnboarding: (
+    level: Level,
+    name?: string,
+    goal?: UserProgress["learningGoal"],
+    avatarUrl?: string | null
+  ) => void;
   setLevel: (level: Level) => void;
   addXp: (amount: number) => void;
   markDayComplete: (day: string) => void;
@@ -138,13 +143,19 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const completeOnboarding = useCallback(
-    (level: Level, name?: string, goal?: UserProgress["learningGoal"]) => {
+    (
+      level: Level,
+      name?: string,
+      goal?: UserProgress["learningGoal"],
+      avatarUrl?: string | null
+    ) => {
       setProgress((prev) => ({
         ...prev,
         onboardingComplete: true,
         level,
         learningGoal: goal ?? prev.learningGoal ?? null,
         name: name || prev.name,
+        avatarUrl: avatarUrl !== undefined ? avatarUrl : prev.avatarUrl,
         lastActiveDate: todayKey(),
         streak: 1,
       }));

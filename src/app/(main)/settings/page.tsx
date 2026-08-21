@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { LEVELS } from "@/data/levels";
 import { LevelCard } from "@/components/ui/LevelCard";
@@ -10,11 +11,15 @@ import { Card } from "@/components/ui/Card";
 import { AppHeader } from "@/components/layout/AppHeader";
 import type { Level } from "@/lib/types";
 
+const AVATARS = [
+  { id: "girl", src: "/girl.png", labelHy: "Աղջիկ" },
+  { id: "boy", src: "/boy.png", labelHy: "Տղա" },
+] as const;
+
 export default function SettingsPage() {
   const { progress, setLevel, resetAll, updateProfile, hydrated } = useProgress();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -28,16 +33,7 @@ export default function SettingsPage() {
     updateProfile({ firstName: firstName.trim(), lastName: lastName.trim() });
   };
 
-  const onAvatar = (file: File | null) => {
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      updateProfile({ avatarUrl: String(reader.result) });
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const initial = (firstName || "Ա").slice(0, 1).toUpperCase();
+  const selectedAvatar = progress.avatarUrl;
 
   return (
     <div className="px-5 pt-5 pb-8 space-y-5">
@@ -49,50 +45,41 @@ export default function SettingsPage() {
 
       <Card className="space-y-4">
         <p className="text-sm text-[#062B56]/50">Պրոֆիլ</p>
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            className="h-20 w-20 rounded-full bg-[#C7E0E7] overflow-hidden flex items-center justify-center shrink-0 shadow-sm"
-            aria-label="Փոխել ավատարը"
-          >
-            {progress.avatarUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={progress.avatarUrl}
-                alt=""
-                className="h-full w-full object-cover"
-              />
-            ) : (
-              <span className="text-2xl font-bold text-[#062B56]">{initial}</span>
-            )}
-          </button>
-          <div className="space-y-1">
-            <Button
-              type="button"
-              size="sm"
-              variant="soft"
-              onClick={() => fileRef.current?.click()}
-            >
-              Ընտրել լուսանկար
-            </Button>
-            {progress.avatarUrl && (
-              <button
-                type="button"
-                className="block text-xs text-[#FD7035]"
-                onClick={() => updateProfile({ avatarUrl: null })}
-              >
-                Հեռացնել
-              </button>
-            )}
+
+        <div>
+          <p className="text-sm font-semibold text-[#062B56] mb-3">
+            Ընտրե՛ք ավատարը
+          </p>
+          <div className="grid grid-cols-2 gap-3">
+            {AVATARS.map((a) => {
+              const active = selectedAvatar === a.src;
+              return (
+                <button
+                  key={a.id}
+                  type="button"
+                  onClick={() => updateProfile({ avatarUrl: a.src })}
+                  className={`rounded-[24px] p-3 border-2 transition-all ${
+                    active
+                      ? "border-[#FD7035] bg-[#FD7035]/10"
+                      : "border-[#062B56]/10 bg-[#FAFAFA]"
+                  }`}
+                >
+                  <div className="relative mx-auto h-28 w-28 rounded-full overflow-hidden bg-[#C7E0E7] shadow-sm">
+                    <Image
+                      src={a.src}
+                      alt={a.labelHy}
+                      fill
+                      className="object-cover"
+                      sizes="112px"
+                    />
+                  </div>
+                  <p className="mt-2 text-center font-bold text-[#062B56]">
+                    {a.labelHy}
+                  </p>
+                </button>
+              );
+            })}
           </div>
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={(e) => onAvatar(e.target.files?.[0] || null)}
-          />
         </div>
 
         <div className="space-y-2">

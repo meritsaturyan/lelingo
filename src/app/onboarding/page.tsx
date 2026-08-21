@@ -29,11 +29,17 @@ const GOALS: { id: LearningGoal; titleHy: string; desc: string }[] = [
   { id: "other", titleHy: "Այլ", desc: "Անձնական հետաքրքրություն" },
 ];
 
+const AVATARS = [
+  { id: "girl", src: "/girl.png", labelHy: "Աղջիկ" },
+  { id: "boy", src: "/boy.png", labelHy: "Տղա" },
+] as const;
+
 export default function OnboardingPage() {
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<LearningGoal | null>(null);
+  const [avatar, setAvatar] = useState<string | null>(null);
   const [selected, setSelected] = useState<Level | null>(null);
-  const { completeOnboarding } = useProgress();
+  const { completeOnboarding, updateProfile } = useProgress();
   const router = useRouter();
 
   if (step === 0) {
@@ -136,6 +142,70 @@ export default function OnboardingPage() {
     );
   }
 
+  if (step === 2) {
+    return (
+      <div className="min-h-dvh px-5 py-8 pb-10 bg-[#C7E0E7]/30">
+        <div className="mb-4">
+          <Image src="/logo2.png" alt="Le Lingo" width={120} height={40} className="h-9 w-auto" />
+        </div>
+        <button
+          type="button"
+          onClick={() => setStep(1)}
+          className="text-[#062B56]/50 mb-4 text-sm"
+        >
+          ← Վերադառնալ
+        </button>
+        <h1 className="text-3xl font-extrabold text-[#062B56]">
+          Ընտրե՛ք ավատարը
+        </h1>
+        <p className="text-[#062B56]/60 mt-2 mb-6">
+          Աղջիկ կամ տղա — հետո կարող եք փոխել կարգավորումներում։
+        </p>
+
+        <div className="grid grid-cols-2 gap-4 mb-8">
+          {AVATARS.map((a) => {
+            const active = avatar === a.src;
+            return (
+              <button
+                key={a.id}
+                type="button"
+                onClick={() => setAvatar(a.src)}
+                className={`rounded-[28px] p-4 border-2 transition-all ${
+                  active
+                    ? "border-[#FD7035] bg-[#FD7035]/10"
+                    : "border-[#062B56]/10 bg-white"
+                }`}
+              >
+                <div className="relative mx-auto h-32 w-32 rounded-full overflow-hidden bg-[#C7E0E7] shadow-sm">
+                  <Image
+                    src={a.src}
+                    alt={a.labelHy}
+                    fill
+                    className="object-cover"
+                    sizes="128px"
+                    priority
+                  />
+                </div>
+                <p className="mt-3 text-center font-bold text-[#062B56] text-lg">
+                  {a.labelHy}
+                </p>
+              </button>
+            );
+          })}
+        </div>
+
+        <Button
+          className="w-full"
+          size="lg"
+          disabled={!avatar}
+          onClick={() => setStep(3)}
+        >
+          Շարունակել
+        </Button>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-dvh px-5 py-8 pb-10 bg-[#C7E0E7]/30">
       <div className="mb-4">
@@ -143,7 +213,7 @@ export default function OnboardingPage() {
       </div>
       <button
         type="button"
-        onClick={() => setStep(1)}
+        onClick={() => setStep(2)}
         className="text-[#062B56]/50 mb-4 text-sm"
       >
         ← Վերադառնալ
@@ -152,7 +222,7 @@ export default function OnboardingPage() {
         Ընտրե՛ք մակարդակը
       </h1>
       <p className="text-[#062B56]/60 mt-2 mb-6 animate-fade-up">
-        A1-ը նախատեսված է 1 ամսվա համար՝ 4 շաբաթով։
+        A1-ը մոտ 5–6 շաբաթ է։
       </p>
 
       <div className="space-y-3 mb-6">
@@ -173,7 +243,7 @@ export default function OnboardingPage() {
           disabled={!selected}
           onClick={() => {
             if (!selected) return;
-            completeOnboarding(selected, undefined, goal);
+            completeOnboarding(selected, undefined, goal, avatar);
             router.push("/dashboard");
           }}
         >
@@ -183,7 +253,10 @@ export default function OnboardingPage() {
           className="w-full"
           size="lg"
           variant="soft"
-          onClick={() => router.push("/placement")}
+          onClick={() => {
+            if (avatar) updateProfile({ avatarUrl: avatar });
+            router.push("/placement");
+          }}
         >
           Որոշել իմ մակարդակը
         </Button>
