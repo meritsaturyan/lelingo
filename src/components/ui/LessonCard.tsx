@@ -69,7 +69,21 @@ export function LessonCard({
               )}
               <div className="inline-flex items-center gap-2 mb-2">
                 <span className="h-7 w-7 rounded-full bg-white/70 flex items-center justify-center text-sm text-[#062B56]">
-                  {locked ? "🔒" : status === "completed" ? "✓" : status === "today" ? "→" : "○"}
+                  {locked ? (
+                    <Image
+                      src="/lock-icon.png"
+                      alt=""
+                      width={16}
+                      height={16}
+                      className="h-4 w-4 object-contain"
+                    />
+                  ) : status === "completed" ? (
+                    "✓"
+                  ) : status === "today" ? (
+                    "→"
+                  ) : (
+                    "○"
+                  )}
                 </span>
                 <span className="text-xs font-medium text-[#062B56]/70 bg-white/50 px-3 py-1 rounded-full">
                   {typeLabels[type] || type}

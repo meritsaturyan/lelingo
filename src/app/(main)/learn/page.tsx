@@ -55,8 +55,15 @@ export default function LearnPage() {
                   <p className="text-sm text-[#062B56]/50">{week.titleFr}</p>
                 </div>
                 {!unlocked && (
-                  <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#062B56]/10 text-[#062B56]/60">
-                    🔒 Փակ
+                  <span className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full bg-[#062B56]/10 text-[#062B56]/60">
+                    <Image
+                      src="/lock-icon.png"
+                      alt=""
+                      width={14}
+                      height={14}
+                      className="h-3.5 w-3.5 object-contain"
+                    />
+                    Փակ
                   </span>
                 )}
               </div>
