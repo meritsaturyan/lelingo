@@ -6,7 +6,6 @@ import { useProgress } from "@/lib/store";
 import { Card } from "@/components/ui/Card";
 import { StreakCard, WeeklyCalendar } from "@/components/ui/StreakCard";
 import { LessonCard } from "@/components/ui/LessonCard";
-import { LevelProgressVideos } from "@/components/ui/LevelProgressVideos";
 import { AppHeader, lessonImage } from "@/components/layout/AppHeader";
 import { getWeeklySchedule } from "@/data/weekly";
 import { getA1Month, isWeekUnlocked } from "@/data/a1-month";
@@ -57,8 +56,6 @@ export default function DashboardPage() {
   return (
     <div className="px-5 pt-5 pb-4 space-y-5">
       <AppHeader showSettings />
-
-      <LevelProgressVideos level={level} />
 
       <StreakCard streak={progress.streak} />
       <WeeklyCalendar completedDays={progress.completedDays} />
