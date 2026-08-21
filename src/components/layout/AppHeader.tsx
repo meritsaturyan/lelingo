@@ -86,16 +86,26 @@ export function streakImage(streak: number): string {
 }
 
 export const LESSON_IMAGES = [
+  "/lessons/paris-aqo-1.jpeg",
+  "/lessons/paris-aqo-2.jpeg",
+  "/lessons/seine.jpeg",
+  "/lessons/paris-map.jpeg",
+  "/lessons/paris-autumn.jpeg",
+  "/lessons/paris-18.jpeg",
+  "/lessons/paris-17.jpeg",
+  "/lessons/paris-16.jpeg",
+  "/lessons/paris-15.jpeg",
+  "/lessons/paris-14.jpeg",
+  "/lessons/paris-13.jpeg",
+  "/lessons/paris-12.jpeg",
+  "/lessons/paris-11.jpeg",
+  "/lessons/paris-10.jpeg",
+  "/lessons/paris-9.jpeg",
   "/paris.jpg",
   "/luvr.jpg",
   "/luvr1.jpg",
-  "/luvr2.jpg",
   "/cafe.jpg",
   "/arka.jpg",
-  "/cafe1.jpg",
-  "/axjikshun.jpg",
-  "/dior.jpg",
-  "/caxik.jpg",
 ] as const;
 
 export function lessonImage(index: number): string {

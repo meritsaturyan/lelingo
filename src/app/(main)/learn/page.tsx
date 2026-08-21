@@ -70,6 +70,7 @@ export default function LearnPage() {
                     : unlocked
                       ? "today"
                       : "upcoming";
+                  const imageIndex = (week.week - 1) * 8 + i;
 
                   return (
                     <LessonCard
@@ -87,7 +88,7 @@ export default function LearnPage() {
                       status={status}
                       variant={variants[i % variants.length]}
                       dayLabel={`${day.dayLabelHy} · ${day.dayLabelFr}`}
-                      image={lessonImage(i)}
+                      image={lessonImage(imageIndex)}
                       locked={!unlocked}
                     />
                   );
