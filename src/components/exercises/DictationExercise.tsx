@@ -5,6 +5,7 @@ import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { compareDictation } from "@/lib/utils";
+import { playCorrectSound, playWrongSound } from "@/lib/sounds";
 
 export function DictationExercise({
   text,
@@ -23,6 +24,8 @@ export function DictationExercise({
   const submit = () => {
     const r = compareDictation(text, answer);
     setResult(r);
+    if (r.score >= 7) playCorrectSound();
+    else playWrongSound();
   };
 
   return (

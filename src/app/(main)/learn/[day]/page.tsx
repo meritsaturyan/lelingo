@@ -13,6 +13,8 @@ import { ReadingLesson } from "@/components/exercises/ReadingLesson";
 import { AppHeader } from "@/components/layout/AppHeader";
 import type { Level } from "@/lib/types";
 import { useRouter } from "next/navigation";
+import { playCompleteSound } from "@/lib/sounds";
+import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
 
 export default function DayLessonPage({
   params,
@@ -77,12 +79,14 @@ export default function DayLessonPage({
     markDayComplete(completeKey);
     addXp(25 + correctCount * 5);
     updateSkill("vocabulary", 3);
+    playCompleteSound();
     setPhase("done");
   };
 
   if (phase === "done") {
     return (
-      <div className="px-5 py-10 space-y-5">
+      <div className="relative px-5 py-10 space-y-5">
+        <ConfettiBurst active />
         <Card variant="blue" className="text-center py-8">
           <h1 className="text-2xl font-extrabold text-[#062B56]">Դասն ավարտված է</h1>
           <p className="text-[#062B56]/70 mt-2">

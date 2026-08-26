@@ -1,4 +1,5 @@
 let currentAudio: HTMLAudioElement | null = null;
+let speakGeneration = 0;
 
 function speakFrenchBrowser(text: string, rate = 0.9): Promise<void> {
   return new Promise((resolve) => {
@@ -57,7 +58,8 @@ function speakFrenchBrowser(text: string, rate = 0.9): Promise<void> {
 /** High-quality French neural voice (Denise) via API, with browser fallback */
 export async function speakFrench(text: string, rate = 0.9): Promise<void> {
   if (typeof window === "undefined") return;
-  stopSpeaking();
+  const gen = ++speakGeneration;
+  stopSpeaking(false);
 
   try {
     const url = `/api/tts?text=${encodeURIComponent(text)}&rate=${rate}`;
@@ -72,16 +74,19 @@ export async function speakFrench(text: string, rate = 0.9): Promise<void> {
       if (playPromise) playPromise.catch(reject);
     });
   } catch {
+    // Only fall back if this call is still the latest (avoids overlapping voices)
+    if (gen !== speakGeneration) return;
     await speakFrenchBrowser(text, rate);
   } finally {
-    if (currentAudio) {
+    if (gen === speakGeneration && currentAudio) {
       currentAudio = null;
     }
   }
 }
 
-export function stopSpeaking() {
+export function stopSpeaking(bumpGeneration = true) {
   if (typeof window === "undefined") return;
+  if (bumpGeneration) speakGeneration += 1;
   if (currentAudio) {
     try {
       currentAudio.pause();
@@ -124,7 +129,7 @@ type SpeechRecognitionInstance = {
         resultIndex: number;
         results: {
           [index: number]: {
-            [index: number]: { transcript: string };
+            [index: number]: { transcript: string; confidence?: number };
             isFinal: boolean;
             length: number;
           };
@@ -186,11 +191,10 @@ export function startListeningFrench(
   let pendingEmit = "";
   let starting = false;
 
-  // Mobile: allow more silence-retries (Chrome ends early), but slow restarts
-  const MAX_SILENCE_RESTARTS = mobile ? 12 : 4;
-  const RESTART_DELAY_MS = mobile ? 450 : 500;
-  const SESSION_MS = mobile ? 20000 : 30000;
-  const IDLE_FINISH_AFTER_FINAL_MS = mobile ? 1800 : 1200;
+  const MAX_SILENCE_RESTARTS = mobile ? 16 : 6;
+  const RESTART_DELAY_MS = mobile ? 400 : 450;
+  const SESSION_MS = mobile ? 28000 : 40000;
+  const IDLE_FINISH_AFTER_FINAL_MS = mobile ? 2600 : 2000;
 
   const clearTimers = () => {
     if (restartTimer) {
@@ -239,7 +243,7 @@ export function startListeningFrench(
         emitTimer = null;
         if (pendingEmit) onPartial(pendingEmit);
       },
-      mobile ? 150 : 50
+      mobile ? 120 : 40
     );
   };
 
@@ -247,11 +251,26 @@ export function startListeningFrench(
     scheduleEmit(`${finalText} ${interim}`.replace(/\s+/g, " ").trim());
   };
 
+  const pickBestAlt = (result: {
+    [index: number]: { transcript: string; confidence?: number };
+    length: number;
+  }) => {
+    let best = result[0]?.transcript ?? "";
+    let bestConf = result[0]?.confidence ?? 0;
+    for (let a = 1; a < result.length; a++) {
+      const conf = result[a]?.confidence ?? 0;
+      if (conf > bestConf) {
+        bestConf = conf;
+        best = result[a]?.transcript ?? best;
+      }
+    }
+    return best;
+  };
+
   const scheduleRestart = () => {
     if (!active) return;
     if (restartTimer) return;
 
-    // After a final result, wait a bit then finish (user said something)
     if (gotFinal) {
       restartTimer = setTimeout(() => {
         restartTimer = null;
@@ -278,7 +297,6 @@ export function startListeningFrench(
     if (!active || starting) return;
     starting = true;
 
-    // Dispose previous instance cleanly before creating a new one
     if (recognition) {
       const old = recognition;
       recognition = null;
@@ -296,10 +314,9 @@ export function startListeningFrench(
     const rec = new Ctor();
     recognition = rec;
     rec.lang = "fr-FR";
-    // continuous=true keeps the session open longer on Android Chrome
     rec.continuous = true;
     rec.interimResults = true;
-    rec.maxAlternatives = 1;
+    rec.maxAlternatives = 3;
 
     rec.onstart = () => {
       starting = false;
@@ -308,12 +325,16 @@ export function startListeningFrench(
 
     rec.onresult = (event) => {
       if (!active) return;
-      // Got speech — reset silence counter
       silenceRestarts = 0;
+      // New speech after a final — keep session open longer
+      if (restartTimer && gotFinal) {
+        clearTimeout(restartTimer);
+        restartTimer = null;
+      }
       let interim = "";
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const result = event.results[i];
-        const piece = result[0]?.transcript ?? "";
+        const piece = pickBestAlt(result);
         if (result.isFinal) {
           gotFinal = true;
           finalText = `${finalText} ${piece}`.replace(/\s+/g, " ").trim();
@@ -328,7 +349,6 @@ export function startListeningFrench(
       starting = false;
       if (!active) return;
 
-      // These are normal on mobile — recognition will fire onend next
       if (
         event.error === "no-speech" ||
         event.error === "aborted" ||
@@ -360,7 +380,6 @@ export function startListeningFrench(
         onStatus?.(false);
         return;
       }
-      // Keep listening via gentle restart — do NOT finish on first onend
       scheduleRestart();
     };
 
@@ -368,7 +387,6 @@ export function startListeningFrench(
       rec.start();
     } catch {
       starting = false;
-      // InvalidStateError — try again shortly
       scheduleRestart();
     }
   };

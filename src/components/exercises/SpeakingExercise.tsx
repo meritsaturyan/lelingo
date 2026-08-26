@@ -10,6 +10,7 @@ import {
   type ListenController,
 } from "@/lib/tts";
 import { evaluateSpeaking } from "@/lib/utils";
+import { playCorrectSound, playWrongSound } from "@/lib/sounds";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
@@ -23,7 +24,7 @@ export function SpeakingExercise({
   onComplete?: (score: number) => void;
 }) {
   const [listening, setListening] = useState(false);
-  const [transcript, setTranscript] = useState("");
+  const [draft, setDraft] = useState("");
   const [supported, setSupported] = useState(true);
   const [micError, setMicError] = useState<string | null>(null);
   const [isMobile, setIsMobile] = useState(false);
@@ -31,8 +32,10 @@ export function SpeakingExercise({
   const [result, setResult] = useState<ReturnType<typeof evaluateSpeaking> | null>(
     null
   );
+  const [shownTranscript, setShownTranscript] = useState("");
   const controllerRef = useRef<ListenController | null>(null);
   const startingRef = useRef(false);
+  const draftRef = useRef("");
 
   useEffect(() => {
     setSupported(isSpeechRecognitionSupported());
@@ -48,7 +51,9 @@ export function SpeakingExercise({
     controllerRef.current = null;
     startingRef.current = false;
     setListening(false);
-    setTranscript("");
+    setDraft("");
+    draftRef.current = "";
+    setShownTranscript("");
     setResult(null);
     setMicError(null);
   }, [prompt.id]);
@@ -65,7 +70,10 @@ export function SpeakingExercise({
     startingRef.current = true;
 
     setResult(null);
+    setShownTranscript("");
     setMicError(null);
+    setDraft("");
+    draftRef.current = "";
     stopSpeaking();
 
     if (typeof window !== "undefined" && !window.isSecureContext) {
@@ -86,13 +94,14 @@ export function SpeakingExercise({
       return;
     }
 
-    // Do NOT call getUserMedia first on mobile — it locks the mic
-    // and then SpeechRecognition freezes or immediately disconnects.
     controllerRef.current?.stop();
     setListening(true);
 
     const controller = startListeningFrench(
-      (text) => setTranscript(text),
+      (text) => {
+        draftRef.current = text;
+        setDraft(text);
+      },
       (err) => {
         startingRef.current = false;
         setListening(false);
@@ -138,11 +147,17 @@ export function SpeakingExercise({
     else start();
   };
 
-  const evaluate = (text: string) => {
+  const evaluate = () => {
     stop();
+    const text = (draftRef.current || draft).trim();
+    setShownTranscript(text);
     const r = evaluateSpeaking(text, prompt.expectedKeywords);
     setResult(r);
+    if (r.total >= 60) playCorrectSound();
+    else playWrongSound();
   };
+
+  const canEvaluate = !listening && !!draft.trim();
 
   return (
     <Card className="space-y-4">
@@ -170,7 +185,7 @@ export function SpeakingExercise({
           <>
             <br />
             Հեռախոսում՝ սեղմե՛ք «Խոսել», թույլատրե՛ք միկրոֆոնը, ապա անմիջապես խոսե՛ք։
-            Կանգնեցնելու համար սեղմե՛ք «Կանգնեցնել»։
+            Ավարտելուց հետո սեղմե՛ք «Գնահատել»։
           </>
         )}
       </p>
@@ -198,24 +213,30 @@ export function SpeakingExercise({
           <span className="h-2.5 w-2.5 rounded-full bg-[#FD7035] animate-soft-pulse" />
           <p className="text-sm font-semibold text-[#062B56]">
             {isMobile
-              ? "Լսում է… խոսե՛ք հիմա (մինչև 20 վրկ)"
+              ? "Լսում է… խոսե՛ք հիմա"
               : "Լսում է… խոսե՛ք ֆրանսերեն"}
           </p>
         </div>
       )}
 
-      <textarea
-        value={transcript}
-        onChange={(e) => setTranscript(e.target.value)}
-        rows={3}
-        placeholder="Ձեր պատասխանը կհայտնվի այստեղ, կամ գրե՛ք ձեռքով…"
-        className="w-full px-4 py-3 rounded-2xl border border-[#062B56]/10 bg-[#FAFAFA] text-[#062B56] outline-none focus:border-[#C7E0E7] resize-none"
-      />
+      {/* Manual fallback only when STT unsupported — otherwise transcript stays hidden until evaluate */}
+      {!supported && !result && (
+        <textarea
+          value={draft}
+          onChange={(e) => {
+            setDraft(e.target.value);
+            draftRef.current = e.target.value;
+          }}
+          rows={3}
+          placeholder="Գրե՛ք պատասխանը այստեղ…"
+          className="w-full px-4 py-3 rounded-2xl border border-[#062B56]/10 bg-[#FAFAFA] text-[#062B56] outline-none focus:border-[#C7E0E7] resize-none"
+        />
+      )}
 
       {!result && (
         <Button
-          onClick={() => evaluate(transcript)}
-          disabled={!transcript.trim()}
+          onClick={evaluate}
+          disabled={!canEvaluate && supported}
           className="w-full touch-manipulation"
           variant="secondary"
           type="button"
@@ -249,7 +270,9 @@ export function SpeakingExercise({
 
           <div className="rounded-2xl bg-[#FAFAFA] p-4">
             <p className="text-sm text-[#062B56]/50">Դուք ասացիք՝</p>
-            <p className="font-medium text-[#062B56]">{transcript}</p>
+            <p className="font-medium text-[#062B56]">
+              {shownTranscript || "(դատարկ)"}
+            </p>
             <p className="text-sm text-[#062B56]/50 mt-3">Օրինակ պատասխան՝</p>
             <p className="font-medium text-[#062B56]">{prompt.sampleAnswer}</p>
           </div>

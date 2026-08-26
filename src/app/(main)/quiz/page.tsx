@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { useProgress } from "@/lib/store";
+import { playCorrectSound, playWrongSound, playCompleteSound } from "@/lib/sounds";
+import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
 
 function shuffle<T>(arr: T[]): T[] {
   return [...arr].sort(() => Math.random() - 0.5);
@@ -31,7 +33,8 @@ export default function QuizPage() {
 
   if (done) {
     return (
-      <div className="px-5 pt-5 pb-8 space-y-5">
+      <div className="relative px-5 pt-5 pb-8 space-y-5">
+        <ConfettiBurst active />
         <AppHeader />
         <Card variant="blue" className="text-center py-8">
           <h1 className="text-2xl font-extrabold text-[#062B56]">Quiz արդյունք</h1>
@@ -118,6 +121,9 @@ export default function QuizPage() {
               setScore((s) => s + 1);
               addXp(5);
               updateSkill("vocabulary", 1);
+              playCorrectSound();
+            } else {
+              playWrongSound();
             }
           }}
         >
@@ -136,8 +142,10 @@ export default function QuizPage() {
           <Button
             className="w-full"
             onClick={() => {
-              if (index + 1 >= items.length) setDone(true);
-              else {
+              if (index + 1 >= items.length) {
+                playCompleteSound();
+                setDone(true);
+              } else {
                 setIndex((i) => i + 1);
                 setSelected(null);
                 setChecked(false);

@@ -610,8 +610,24 @@ export function isWeekUnlocked(
   completed: Record<string, boolean>,
   level = "A1"
 ): boolean {
+  // TEMP: open all weeks for preview — restore locking when ready
+  void week;
+  void completed;
+  void level;
+  return true;
+  /*
   if (week <= 1) return true;
   const prev = A1_MONTH.find((w) => w.week === week - 1);
   if (!prev) return false;
   return prev.lessons.every((l) => completed[`${level}-${l.id}`]);
+  */
+}
+
+export function isA1CourseComplete(
+  completed: Record<string, boolean>,
+  level = "A1"
+): boolean {
+  return A1_MONTH.every((week) =>
+    week.lessons.every((l) => completed[`${level}-${l.id}`])
+  );
 }

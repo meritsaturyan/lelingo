@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/Button";
 import { GrammarExercise } from "@/components/exercises/GrammarExercise";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { useProgress } from "@/lib/store";
+import { playCompleteSound } from "@/lib/sounds";
+import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
 
 const ER_TABLE = [
   ["Je", "-e", "je parle"],
@@ -164,13 +166,15 @@ function GrammarInner({ id }: { id: string }) {
     markDayComplete(day);
     addXp(30 + correct * 5);
     updateSkill("grammar", 4);
+    playCompleteSound();
     setPhase("done");
   };
 
   if (phase === "done") {
     const score = Math.round((correct / lesson.exercises.length) * 100);
     return (
-      <div className="px-5 pt-5 py-10 space-y-5">
+      <div className="relative px-5 pt-5 py-10 space-y-5">
+        <ConfettiBurst active />
         <AppHeader />
         <Card variant="blue" className="text-center py-8">
           <h1 className="text-2xl font-extrabold text-[#062B56]">Արդյունք</h1>

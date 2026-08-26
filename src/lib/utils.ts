@@ -73,20 +73,53 @@ export function evaluateSpeaking(
   corrections: { said: string; correct: string; explanationHy: string }[];
 } {
   const normalized = normalizeFrench(transcript);
-  const matched = expectedKeywords.filter((k) =>
-    normalized.includes(normalizeFrench(k))
-  );
+  const words = normalized.split(/\s+/).filter(Boolean);
+
+  const fuzzyIncludes = (hay: string, needle: string) => {
+    const n = normalizeFrench(needle);
+    if (!n) return false;
+    if (hay.includes(n)) return true;
+    // STT often drops apostrophes / merges words
+    const compactHay = hay.replace(/'/g, "").replace(/\s+/g, "");
+    const compactNeedle = n.replace(/'/g, "").replace(/\s+/g, "");
+    if (compactHay.includes(compactNeedle)) return true;
+    // Allow small edit distance against any word
+    return words.some((w) => {
+      if (Math.abs(w.length - n.length) > 2) return false;
+      let dist = 0;
+      const a = w;
+      const b = n;
+      const dp: number[][] = Array.from({ length: a.length + 1 }, () =>
+        Array(b.length + 1).fill(0)
+      );
+      for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+      for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          dp[i][j] =
+            a[i - 1] === b[j - 1]
+              ? dp[i - 1][j - 1]
+              : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+        }
+      }
+      dist = dp[a.length][b.length];
+      const maxLen = Math.max(a.length, b.length);
+      return dist <= (maxLen <= 4 ? 1 : 2);
+    });
+  };
+
+  const matched = expectedKeywords.filter((k) => fuzzyIncludes(normalized, k));
   const vocabScore = Math.min(
     10,
     Math.round((matched.length / Math.max(expectedKeywords.length, 1)) * 10) ||
-      (normalized.length > 5 ? 4 : 1)
+      (normalized.length > 5 ? 5 : 1)
   );
 
   const wordCount = transcript.trim().split(/\s+/).filter(Boolean).length;
-  const fluency = Math.min(10, Math.max(2, Math.round(wordCount / 2)));
+  const fluency = Math.min(10, Math.max(2, Math.round(wordCount / 1.6)));
   const completeness = Math.min(
     10,
-    Math.round((matched.length / Math.max(expectedKeywords.length, 1)) * 10) || 3
+    Math.round((matched.length / Math.max(expectedKeywords.length, 1)) * 10) || 4
   );
 
   const corrections: { said: string; correct: string; explanationHy: string }[] = [];
@@ -111,6 +144,17 @@ export function evaluateSpeaking(
       grammar -= 1;
     }
   }
+
+  // Missing keywords as soft corrections
+  const missing = expectedKeywords.filter((k) => !fuzzyIncludes(normalized, k));
+  for (const k of missing.slice(0, 3)) {
+    corrections.push({
+      said: "(չի լսվել)",
+      correct: k,
+      explanationHy: `Փորձե՛ք ավելացնել «${k}»՝ ավելի լրիվ պատասխանի համար։`,
+    });
+  }
+
   if (!transcript.trim()) {
     grammar = 0;
     return {

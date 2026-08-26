@@ -16,6 +16,8 @@ import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { AppHeader } from "@/components/layout/AppHeader";
 import { READING_TEXTS } from "@/data/alphabet";
 import { useProgress } from "@/lib/store";
+import { playCompleteSound, playCorrectSound, playWrongSound } from "@/lib/sounds";
+import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
 
 export function ReadingLesson({
   lessonId,
@@ -53,17 +55,9 @@ export function ReadingLesson({
   }
 
   const evaluate = (spoken: string) => {
-    const words = text.french
-      .replace(/[.,!?;:]/g, "")
-      .split(/\s+/)
-      .filter(Boolean);
     const saidNorm = normalizeFrench(spoken);
-    const rows = words.map((w) => {
-      const nw = normalizeFrench(w);
-      const ok = saidNorm.includes(nw) || nw.length <= 2;
-      return { said: spoken ? "…" : "", expected: w, ok };
-    });
     const missing = text.keywords.filter((k) => !saidNorm.includes(normalizeFrench(k)));
+    const ok = missing.length === 0;
     setFeedback(
       missing.length
         ? missing.map((k) => ({
@@ -73,7 +67,9 @@ export function ReadingLesson({
           }))
         : [{ said: spoken.slice(0, 80), expected: "Լավ արտասանություն", ok: true }]
     );
-    return missing.length === 0;
+    if (ok) playCorrectSound();
+    else playWrongSound();
+    return ok;
   };
 
   const toggle = () => {
@@ -107,12 +103,14 @@ export function ReadingLesson({
     markDayComplete(lessonId);
     addXp(25);
     updateSkill("speaking", 3);
+    playCompleteSound();
     setDone(true);
   };
 
   if (done) {
     return (
-      <div className="px-5 pt-5 pb-8 space-y-5">
+      <div className="relative px-5 pt-5 pb-8 space-y-5">
+        <ConfettiBurst active />
         <AppHeader />
         <Card variant="blue" className="text-center py-8">
           <h1 className="text-2xl font-extrabold text-[#062B56]">Վերջ</h1>
@@ -154,15 +152,16 @@ export function ReadingLesson({
         >
           {listening ? "Կանգնեցնել" : "Սկսել ընթերցումը"}
         </Button>
-        {transcript && (
-          <p className="text-sm text-[#062B56]/70 bg-[#FAFAFA] rounded-2xl p-3">
-            Դուք ասացիք՝ {transcript}
-          </p>
+        {listening && (
+          <div className="flex items-center justify-center gap-2 rounded-2xl bg-[#C7E0E7] py-3">
+            <span className="h-2.5 w-2.5 rounded-full bg-[#FD7035] animate-soft-pulse" />
+            <p className="text-sm font-semibold text-[#062B56]">Լսում է… կարդացե՛ք</p>
+          </div>
         )}
         <Button
           variant="secondary"
           className="w-full"
-          disabled={!transcript.trim()}
+          disabled={listening || !transcript.trim()}
           onClick={() => evaluate(transcript)}
         >
           Ստուգել արտասանությունը
@@ -172,8 +171,13 @@ export function ReadingLesson({
       {feedback && (
         <Card className={feedback.every((f) => f.ok) ? "bg-[#C7E0E7]" : ""}>
           <p className="font-bold text-[#062B56] mb-2">
-            {feedback.every((f) => f.ok) ? "✓ Լավ է" : "Ուղղումներ"}
+            {feedback.every((f) => f.ok) ? "✓ Լավ է" : "Նորի՛ց փորձիր"}
           </p>
+          {transcript && (
+            <p className="text-sm text-[#062B56]/70 mb-2">
+              Դուք ասացիք՝ {transcript}
+            </p>
+          )}
           {feedback.map((f, i) => (
             <p key={i} className="text-sm text-[#062B56] mt-1">
               {f.ok ? (

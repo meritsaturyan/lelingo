@@ -8,9 +8,10 @@ import { StreakCard, WeeklyCalendar } from "@/components/ui/StreakCard";
 import { LessonCard } from "@/components/ui/LessonCard";
 import { AppHeader, lessonImage } from "@/components/layout/AppHeader";
 import { getWeeklySchedule } from "@/data/weekly";
-import { getA1Month, isWeekUnlocked } from "@/data/a1-month";
+import { getA1Month, isWeekUnlocked, isA1CourseComplete } from "@/data/a1-month";
 import { getDayOfWeek } from "@/lib/utils";
 import type { DayLesson, Level } from "@/lib/types";
+import { DiplomaSection } from "@/components/ui/DiplomaSection";
 
 function lessonHref(day: DayLesson) {
   const key = day.id || String(day.day);
@@ -52,6 +53,9 @@ export default function DashboardPage() {
           .find((w) => w.week === todayLesson.week)
           ?.lessons.findIndex((l) => l.id === todayLesson.id) ?? 0)
       : todayIdx;
+
+  const diplomaUnlocked =
+    level === "A1" && isA1CourseComplete(progress.weeklyCompleted, level);
 
   return (
     <div className="px-5 pt-5 pb-4 space-y-5">
@@ -114,6 +118,8 @@ export default function DashboardPage() {
           </Card>
         </Link>
       </div>
+
+      {level === "A1" && <DiplomaSection unlocked={diplomaUnlocked} />}
     </div>
   );
 }

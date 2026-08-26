@@ -1,6 +1,11 @@
+"use client";
+
+import { useEffect } from "react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import Link from "next/link";
+import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
+import { playCompleteSound } from "@/lib/sounds";
 
 export function TestResult({
   title,
@@ -26,10 +31,15 @@ export function TestResult({
       ? "Շատ լավ արդյունք 🎉"
       : score >= 60
         ? "Լավ է, շարունակի՛ր՛"
-        : "Պարապի՛ր և նորից փորձի՛ր";
+        : "Պարապի՛ր և Նորի՛ց փորձիր";
+
+  useEffect(() => {
+    playCompleteSound();
+  }, []);
 
   return (
-    <div className="space-y-5 animate-in">
+    <div className="relative space-y-5 animate-in">
+      <ConfettiBurst active />
       <Card variant="blue" className="text-center py-8">
         <p className="text-sm font-medium text-[#062B56]/60">{title}</p>
         <h2 className="text-3xl font-bold text-[#062B56] mt-2">{message}</h2>

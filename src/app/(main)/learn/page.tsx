@@ -4,11 +4,12 @@ import Link from "next/link";
 import Image from "next/image";
 import { useProgress } from "@/lib/store";
 import { getWeeklySchedule } from "@/data/weekly";
-import { getA1Month, isWeekUnlocked } from "@/data/a1-month";
+import { getA1Month, isWeekUnlocked, isA1CourseComplete } from "@/data/a1-month";
 import { LessonCard } from "@/components/ui/LessonCard";
 import { AppHeader, lessonImage } from "@/components/layout/AppHeader";
 import { getDayOfWeek } from "@/lib/utils";
 import type { Level } from "@/lib/types";
+import { DiplomaSection } from "@/components/ui/DiplomaSection";
 
 const variants = ["blue", "accent", "blue", "accent", "blue", "accent", "blue"] as const;
 
@@ -104,6 +105,10 @@ export default function LearnPage() {
             </section>
           );
         })}
+
+        <DiplomaSection
+          unlocked={isA1CourseComplete(progress.weeklyCompleted, level)}
+        />
 
         <div className="grid grid-cols-2 gap-3 pt-2">
           <Link href="/vocabulary" className="rounded-[24px] overflow-hidden bg-white shadow-[0_8px_30px_rgba(6,43,86,0.06)]">

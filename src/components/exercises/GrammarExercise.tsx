@@ -6,6 +6,7 @@ import { AudioPlayer } from "@/components/ui/AudioPlayer";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { normalizeFrench } from "@/lib/utils";
+import { playCorrectSound, playWrongSound } from "@/lib/sounds";
 
 export function GrammarExercise({
   exercise,
@@ -48,6 +49,8 @@ export function GrammarExercise({
     }
     setIsCorrect(ok);
     setChecked(true);
+    if (ok) playCorrectSound();
+    else playWrongSound();
   };
 
   const moveWord = (idx: number) => {
@@ -203,6 +206,9 @@ export function GrammarExercise({
                     : exercise.correctAnswer}
                 </strong>
               </p>
+            )}
+            {!isCorrect && (
+              <p className="text-sm font-bold text-[#FD7035] mt-2">Նորի՛ց փորձիր</p>
             )}
             <p className="text-sm text-[#062B56]/70 mt-2">{exercise.explanationHy}</p>
           </div>
