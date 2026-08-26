@@ -106,10 +106,6 @@ export default function LearnPage() {
           );
         })}
 
-        <DiplomaSection
-          unlocked={isA1CourseComplete(progress.weeklyCompleted, level)}
-        />
-
         <div className="grid grid-cols-2 gap-3 pt-2">
           <Link href="/vocabulary" className="rounded-[24px] overflow-hidden bg-white shadow-[0_8px_30px_rgba(6,43,86,0.06)]">
             <div className="h-20 relative">
@@ -124,6 +120,10 @@ export default function LearnPage() {
             <p className="font-bold text-[#062B56] p-3">Թելադրություն</p>
           </Link>
         </div>
+
+        <DiplomaSection
+          unlocked={isA1CourseComplete(progress.weeklyCompleted, level)}
+        />
       </div>
     );
   }

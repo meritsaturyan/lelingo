@@ -36,7 +36,7 @@ export default function MainLayout({
   }
 
   return (
-    <div className="min-h-dvh pb-28">
+    <div className="min-h-dvh pb-32">
       {children}
       <BottomNavigation />
     </div>

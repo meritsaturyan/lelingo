@@ -5,48 +5,122 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
-const tabs = [
+const sideTabs = [
   { href: "/dashboard", label: "Գլխավոր", icon: "/glxavor.jpg" },
-  { href: "/learn", label: "Սովորել", icon: "/sovorel.jpg" },
   { href: "/listen", label: "Լսել", icon: "/lsel.jpg" },
+] as const;
+
+const centerTab = {
+  href: "/learn",
+  label: "Սովորել",
+} as const;
+
+const rightTabs = [
   { href: "/speak", label: "Խոսել", icon: "/xosel.jpg" },
   { href: "/progress", label: "Առաջընթաց", icon: "/arajyntac.jpg" },
-];
+] as const;
+
+function SideTab({
+  href,
+  label,
+  icon,
+  active,
+}: {
+  href: string;
+  label: string;
+  icon: string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "flex flex-1 flex-col items-center justify-end gap-0.5 py-1 min-w-0 transition-colors",
+        active ? "text-[#062B56]" : "text-[#8A94A6]"
+      )}
+    >
+      <span
+        className={cn(
+          "h-7 w-7 rounded-full overflow-hidden",
+          !active && "opacity-75 grayscale-[0.35]"
+        )}
+      >
+        <Image
+          src={icon}
+          alt=""
+          width={28}
+          height={28}
+          className="h-full w-full object-cover"
+        />
+      </span>
+      <span
+        className={cn(
+          "text-[10px] truncate max-w-full",
+          active ? "font-bold text-[#062B56]" : "font-medium"
+        )}
+      >
+        {label}
+      </span>
+    </Link>
+  );
+}
 
 export function BottomNavigation() {
   const pathname = usePathname();
+  const isActive = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
+  const learnActive = isActive(centerTab.href);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 px-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
-      <div className="mx-auto max-w-lg">
-        <div className="bg-white/95 backdrop-blur-xl rounded-[28px] shadow-[0_-4px_30px_rgba(6,43,86,0.1)] border border-[#062B56]/8 px-2 py-2 flex items-center justify-around">
-          {tabs.map((tab) => {
-            const active =
-              pathname === tab.href || pathname.startsWith(tab.href + "/");
-            return (
-              <Link
-                key={tab.href}
-                href={tab.href}
+    <nav className="fixed bottom-0 left-0 right-0 z-50 pb-[env(safe-area-inset-bottom)]">
+      <div className="relative mx-auto max-w-lg">
+        <Link
+          href={centerTab.href}
+          className="absolute left-1/2 z-10 flex -translate-x-1/2 -top-[30px] flex-col items-center"
+          aria-current={learnActive ? "page" : undefined}
+        >
+          <span
+            className={cn(
+              "flex h-[60px] w-[60px] items-center justify-center rounded-full p-[2.5px] shadow-[0_4px_18px_rgba(6,43,86,0.14)] transition-transform",
+              "bg-[linear-gradient(135deg,#7C5CFF_0%,#E85D9A_50%,#FD7035_100%)]",
+              learnActive && "scale-105 shadow-[0_6px_22px_rgba(253,112,53,0.28)]"
+            )}
+          >
+            <span className="flex h-full w-full items-center justify-center rounded-full bg-white">
+              <span
+                className="text-[22px] font-bold leading-none text-[#062B56]"
+                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+              >
+                fr
+              </span>
+            </span>
+          </span>
+        </Link>
+
+        <div className="border-t border-[#062B56]/8 bg-[#F7F8FA] px-1 pb-2 pt-2.5">
+          <div className="flex items-end justify-between">
+            {sideTabs.map((tab) => (
+              <SideTab key={tab.href} {...tab} active={isActive(tab.href)} />
+            ))}
+
+            <Link
+              href={centerTab.href}
+              className="flex flex-1 flex-col items-center justify-end pb-1 pt-9"
+            >
+              <span
                 className={cn(
-                  "flex flex-col items-center gap-0.5 px-2 py-1.5 rounded-2xl transition-all min-w-[56px]",
-                  active
-                    ? "bg-[#C7E0E7] text-[#062B56]"
-                    : "text-[#062B56]/45 hover:text-[#062B56]"
+                  "text-[10px] font-bold",
+                  learnActive ? "text-[#062B56]" : "text-[#8A94A6]"
                 )}
               >
-                <span className="h-7 w-7 rounded-full overflow-hidden bg-white shadow-sm">
-                  <Image
-                    src={tab.icon}
-                    alt={tab.label}
-                    width={28}
-                    height={28}
-                    className="h-full w-full object-cover"
-                  />
-                </span>
-                <span className="text-[10px] font-semibold">{tab.label}</span>
-              </Link>
-            );
-          })}
+                {centerTab.label}
+              </span>
+            </Link>
+
+            {rightTabs.map((tab) => (
+              <SideTab key={tab.href} {...tab} active={isActive(tab.href)} />
+            ))}
+          </div>
         </div>
       </div>
     </nav>
