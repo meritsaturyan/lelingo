@@ -12,6 +12,7 @@ import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Button } from "@/components/ui/Button";
 import { useProgress } from "@/lib/store";
 import { SPEAKING_PROMPTS } from "@/data/listening";
+import { playCompleteSound } from "@/lib/sounds";
 
 type FlatItem = {
   sectionId: string;
@@ -47,6 +48,7 @@ function WeeklyTestInner() {
     const xp = Math.round(score * 0.8) + 20;
     recordWeeklyTest(score, xp);
     markDayComplete(lessonKey);
+    playCompleteSound();
     setDone(true);
   };
 

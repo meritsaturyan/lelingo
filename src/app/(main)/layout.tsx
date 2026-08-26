@@ -2,6 +2,7 @@
 
 import { BottomNavigation } from "@/components/layout/BottomNavigation";
 import { useProgress } from "@/lib/store";
+import { bindAudioUnlock } from "@/lib/sounds";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -12,6 +13,10 @@ export default function MainLayout({
 }) {
   const { progress, hydrated, touchActivity } = useProgress();
   const router = useRouter();
+
+  useEffect(() => {
+    bindAudioUnlock();
+  }, []);
 
   useEffect(() => {
     if (!hydrated) return;
