@@ -86,13 +86,14 @@ export function BottomNavigation() {
               learnActive && "scale-105 shadow-[0_6px_22px_rgba(253,112,53,0.28)]"
             )}
           >
-            <span className="flex h-full w-full items-center justify-center rounded-full bg-white">
-              <span
-                className="text-[22px] font-bold leading-none text-[#062B56]"
-                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              >
-                fr
-              </span>
+            <span className="flex h-full w-full items-center justify-center overflow-hidden rounded-full bg-white">
+              <Image
+                src="/sovorel.jpg"
+                alt=""
+                width={54}
+                height={54}
+                className="h-full w-full object-cover"
+              />
             </span>
           </span>
         </Link>
