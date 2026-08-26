@@ -63,26 +63,6 @@ export default function ProgressPage() {
         ))}
       </div>
 
-      <Card>
-        <h2 className="font-bold text-[#062B56] mb-3">Մանրամասներ</h2>
-        <div className="space-y-4">
-          {skills.map((s) => (
-            <div key={s.key}>
-              <div className="flex justify-between text-sm mb-1">
-                <span className="text-[#062B56]/70">{s.label}</span>
-                <span className="font-semibold text-[#062B56]">
-                  {progress.skillProgress[s.key]}%
-                </span>
-              </div>
-              <ProgressBar
-                value={progress.skillProgress[s.key]}
-                color="navy"
-              />
-            </div>
-          ))}
-        </div>
-      </Card>
-
       {progress.weeklyTestScores.length > 0 && (
         <Card>
           <h2 className="font-bold text-[#062B56] mb-3">Շաբաթվա թեստեր</h2>
