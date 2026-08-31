@@ -162,7 +162,7 @@ export function SpeakingExercise({
   return (
     <Card className="space-y-4">
       <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3">
-        <SpeakingCroissant isSpeaking={ttsSpeaking} size={220} />
+        <SpeakingCroissant isSpeaking={ttsSpeaking} size={170} />
         <div className="flex-1 min-w-0 w-full space-y-2 text-center sm:text-left">
           <div>
             <span className="text-xs font-semibold uppercase tracking-wide text-[#062B56]/50">
