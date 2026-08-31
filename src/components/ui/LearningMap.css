@@ -1,25 +1,33 @@
-.map-path-draw {
-  stroke-dasharray: 280;
-  stroke-dashoffset: 280;
-  animation: lelingo-map-draw 2.8s ease-out forwards;
+/* Neon path overlay on learning map */
+
+.map-neon-glow,
+.map-neon-core {
+  stroke-dasharray: 2500;
+  stroke-dashoffset: 2500;
+  animation: lelingo-neon-draw 4s cubic-bezier(0.4, 0, 0.2, 1) infinite
+    alternate;
 }
 
-.map-path-pulse {
-  animation: lelingo-map-pulse 2.4s ease-in-out infinite;
+.map-neon-node {
+  animation: lelingo-neon-pulse 2s infinite alternate;
 }
 
-@keyframes lelingo-map-draw {
-  to {
+@keyframes lelingo-neon-draw {
+  0% {
+    stroke-dashoffset: 2500;
+  }
+  100% {
     stroke-dashoffset: 0;
   }
 }
 
-@keyframes lelingo-map-pulse {
-  0%,
-  100% {
-    opacity: 0.25;
+@keyframes lelingo-neon-pulse {
+  0% {
+    r: 6;
+    opacity: 0.8;
   }
-  50% {
-    opacity: 0.55;
+  100% {
+    r: 9;
+    opacity: 1;
   }
 }
