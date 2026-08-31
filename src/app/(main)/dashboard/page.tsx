@@ -61,13 +61,14 @@ export default function DashboardPage() {
     <div className="px-5 pt-5 pb-4 space-y-5">
       <AppHeader showSettings />
 
-      <div className="relative w-full overflow-hidden rounded-[28px] aspect-[16/10] shadow-[0_8px_30px_rgba(6,43,86,0.08)]">
+      <div className="-mx-1">
         <Image
           src="/qartez.png"
           alt="Քարտեզ"
-          fill
+          width={1200}
+          height={900}
           priority
-          className="object-cover"
+          className="w-full h-auto object-contain drop-shadow-[0_18px_28px_rgba(6,43,86,0.18)]"
           sizes="(max-width: 640px) 100vw, 560px"
         />
       </div>
