@@ -8,7 +8,7 @@ import { CroissantCharacter } from "@/components/CroissantCharacter";
  */
 export function SpeakingCroissant({
   isSpeaking,
-  size = 170,
+  size = 200,
   className = "",
 }: {
   isSpeaking: boolean;
@@ -20,7 +20,7 @@ export function SpeakingCroissant({
       autoBlink
       autoTalk={isSpeaking}
       size={size}
-      zoom={2.2}
+      zoom={2.5}
       className={className}
     />
   );
