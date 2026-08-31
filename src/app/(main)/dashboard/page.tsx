@@ -12,6 +12,7 @@ import { getA1Month, isWeekUnlocked, isA1CourseComplete } from "@/data/a1-month"
 import { getDayOfWeek } from "@/lib/utils";
 import type { DayLesson, Level } from "@/lib/types";
 import { DiplomaSection } from "@/components/ui/DiplomaSection";
+import { LearningMap } from "@/components/ui/LearningMap";
 
 function lessonHref(day: DayLesson) {
   const key = day.id || String(day.day);
@@ -61,17 +62,7 @@ export default function DashboardPage() {
     <div className="px-5 pt-5 pb-4 space-y-5">
       <AppHeader showSettings />
 
-      <div className="-mx-1">
-        <Image
-          src="/qartez.png"
-          alt="Քարտեզ"
-          width={1200}
-          height={900}
-          priority
-          className="w-full h-auto object-contain drop-shadow-[0_18px_28px_rgba(6,43,86,0.18)]"
-          sizes="(max-width: 640px) 100vw, 560px"
-        />
-      </div>
+      <LearningMap level={level} />
 
       <StreakCard streak={progress.streak} />
       <WeeklyCalendar completedDays={progress.completedDays} />
