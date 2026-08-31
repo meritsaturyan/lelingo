@@ -36,6 +36,11 @@ export type CroissantCharacterProps = {
   className?: string;
   /** Display width; height follows 1:1. */
   size?: number | string;
+  /**
+   * Uniform zoom of the 1024 canvas (crops transparent padding).
+   * Keeps all layers aligned — never scale eyes/mouth separately.
+   */
+  zoom?: number;
 };
 
 function emotionDefaults(
@@ -65,6 +70,7 @@ export function CroissantCharacter({
   showDebug = false,
   className = "",
   size,
+  zoom = 1,
 }: CroissantCharacterProps) {
   const [localEmotion, setLocalEmotion] = useState<CroissantEmotion | null>(
     emotion
@@ -241,12 +247,15 @@ export function CroissantCharacter({
     setMouthState(d.mouth);
   };
 
-  const style: CSSProperties | undefined = size
-    ? {
-        width: typeof size === "number" ? `${size}px` : size,
-        maxWidth: "100%",
-      }
-    : undefined;
+  const style: CSSProperties | undefined = {
+    ...(size
+      ? {
+          width: typeof size === "number" ? `${size}px` : size,
+          maxWidth: "100%",
+        }
+      : null),
+    ["--croissant-zoom" as string]: String(zoom),
+  };
 
   return (
     <div className={showDebug ? "croissant--interactive" : undefined}>

@@ -4,10 +4,11 @@ import { CroissantCharacter } from "@/components/CroissantCharacter";
 
 /**
  * Speak UI wrapper — layered croissant with blink + lip-sync while TTS plays.
+ * PNGs have large transparent padding; zoom crops that without shifting layers.
  */
 export function SpeakingCroissant({
   isSpeaking,
-  size = 140,
+  size = 200,
   className = "",
 }: {
   isSpeaking: boolean;
@@ -19,6 +20,7 @@ export function SpeakingCroissant({
       autoBlink
       autoTalk={isSpeaking}
       size={size}
+      zoom={2.55}
       className={className}
     />
   );
