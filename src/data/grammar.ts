@@ -26,8 +26,18 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     titleFr: "Les pronoms personnels",
     titleHy: "Անձնական դերանուններ",
     explanation:
-      "Անձնական դերանունները ցույց են տալիս՝ ով է գործողությունը կատարում։\n\nJe → ես\nTu → դու\nIl → նա (արական)\nElle → նա (իգական)\nNous → մենք\nVous → դուք\nIls / Elles → նրանք",
+      "Անձնական դերանունները ցույց են տալիս՝ ով է գործողությունը կատարում։\n\nՀպե՛ք 🔊՝ լսելու համար։",
     rule: "Je, tu, il/elle, nous, vous, ils/elles",
+    listenItems: [
+      { french: "Je", armenian: "ես" },
+      { french: "Tu", armenian: "դու" },
+      { french: "Il", armenian: "նա (արական)" },
+      { french: "Elle", armenian: "նա (իգական)" },
+      { french: "Nous", armenian: "մենք" },
+      { french: "Vous", armenian: "դուք" },
+      { french: "Ils", armenian: "նրանք (արական)" },
+      { french: "Elles", armenian: "նրանք (իգական)" },
+    ],
     examples: [
       { french: "Je suis étudiant.", armenian: "Ես ուսանող եմ։" },
       { french: "Elle habite à Paris.", armenian: "Նա ապրում է Փարիզում։" },
@@ -62,10 +72,10 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
     id: "a1-articles",
     level: "A1",
     titleFr: "Les articles définis",
-    titleHy: "Որոշակի հոդեր",
+    titleHy: "Որոշյալ հոդեր",
     explanation:
-      "Որոշակի հոդերը (articles définis) ցույց են տալիս հայտնի, կոնկրետ իր։\n\nՀայերենում հաճախ համապատասխանում են «-ը / -ն» վերջավորությանը։\n\nՕրինակ՝ le livre = գիրքը (կոնկրետ գիրքը)։",
-    rule: "le (m.) · la (f.) · l' (voyelle) · les (pluriel)",
+      "Որոշյալ հոդեր\n\nՕգտագործվում են, երբ խոսում ենք կոնկրետ կամ արդեն հայտնի անձի/առարկայի մասին։\n\nle → արական եզակի\n\nla → իգական եզակի\n\nl’ → ձայնավորից կամ h muet-ից առաջ\n\nles → հոգնակի\n\n⚠️ Կանոն -Ձայնավորից առաջ\n\nle / la → l’\n\nle école ❌\nla école ❌\nl’école ✅",
+    rule: "le (m.) · la (f.) · l' (voyelle / h muet) · les (pluriel)",
     tables: [
       {
         title: "Articles définis",
@@ -76,7 +86,7 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
           ["l'", "l'école", "դպրոցը"],
           ["les", "les livres", "գրքերը"],
         ],
-        noteHy: "le / la → l' ձայնավորից կամ թույլ h-ից առաջ։",
+        noteHy: "Ձայնավորից կամ h muet-ից առաջ՝ le / la → l'։",
       },
     ],
     examples: [
@@ -85,9 +95,9 @@ export const GRAMMAR_LESSONS: GrammarLesson[] = [
       { french: "Les enfants jouent.", armenian: "Երեխաները խաղում են։" },
     ],
     exercises: [
-      mc("ar1", "___ maison (իգական որոշակի)", ["le", "la", "les", "un"], "la", "Maison-ը իգական է՝ la։"),
+      mc("ar1", "___ maison (իգական որոշյալ)", ["le", "la", "les", "un"], "la", "Maison-ը իգական է՝ la։"),
       mc("ar2", "___ école (ձայնավորից առաջ)", ["le", "la", "l'", "les"], "l'", "Ձայնավորից առաջ՝ l'։"),
-      mc("ar3", "___ livres (հոգնակի որոշակի)", ["le", "la", "les", "une"], "les", "Les = հոգնակի որոշակի։"),
+      mc("ar3", "___ livres (հոգնակի որոշյալ)", ["le", "la", "les", "une"], "les", "Les = հոգնակի որոշյալ։"),
     ],
   },
   {

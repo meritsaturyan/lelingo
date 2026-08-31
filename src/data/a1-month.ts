@@ -140,7 +140,7 @@ export const A1_MONTH: MonthWeek[] = [
     titleHy: "Շաբաթ 2 · Քերականություն",
     titleFr: "Semaine 2 — Grammaire",
     lessons: [
-      g("w2-articles", 2, "Օր 8", "a1-articles", "Որոշակի հոդեր", "Les articles définis"),
+      g("w2-articles", 2, "Օր 8", "a1-articles", "Որոշյալ հոդեր", "Les articles définis"),
       g("w2-negation", 2, "Օր 9", "a1-negation", "Ժխտական ձև", "La négation"),
       g("w2-questions", 2, "Օր 10", "a1-questions", "Հարցական նախադասություն", "Poser une question"),
       vocabDay(
@@ -390,7 +390,25 @@ export const A1_MONTH: MonthWeek[] = [
           { french: "Quatre-vingt-un", armenian: "Ութսունմեկ (81)" },
           { french: "Quatre-vingt-onze", armenian: "Իննսունմեկ (91)" },
         ],
-        "31, 41… → trente et un (et, առանց գծիկի)։ 70 = soixante-dix, 80 = quatre-vingts։",
+        `Երբ թիվը վերջանում է 1-ով (բացի 11-ից), ֆրանսերենում տասնյակի և միավորի միջև դրվում է « et » (և) շաղկապը՝ առանց գծիկների։
+Trente et un — Երեսունմեկ (30 և 1)
+Quarante et un — Քառասունմեկ (40 և 1)
+Cinquante et un — Հիսունմեկ (50 + 1)
+Soixante et un — Վաթսունմեկ (60 և 1)
+
+Ուշադրություն. Սա վերաբերում է միայն 1-ին։ 2-ից 9 թվերի դեպքում «et» չի օգտագործվում, այլ դրվում է սովորական գծիկ (-)։
+Trente et un (31)
+Trente-deux (32)
+Trente-trois (33)
+…ինչպես նաև մինչև Trente-neuf (39)։
+
+Ֆրանսերենում թվերի կազմությունը 70-ից սկսված ունի առանձնահատկություն. 70-ը կազմվում է «վաթսուն + տասը» (soixante-dix) տրամաբանությամբ, իսկ 80-ը՝ «չորս քսան» (quatre-vingts)։ Իսկ 90-ը՝ «չորս քսան և տասը»։
+Soixante-dix — Յոթանասուն (70)
+Soixante-et-onze — Յոթանասունմեկ (71)
+Quatre-vingts — Ութսուն (80)
+Quatre-vingt-un — Ութսունմեկ (81)
+Quatre-vingt-dix — Իննսուն (90)
+Quatre-vingt-onze — Իննսունմեկ (91)`,
         [
           {
             id: "w4n2-e1",
@@ -399,6 +417,22 @@ export const A1_MONTH: MonthWeek[] = [
             options: ["Soixante-dix", "Septante", "Quatre-vingts"],
             correctAnswer: "Soixante-dix",
             explanationHy: "Ֆրանսիայում՝ soixante-dix։",
+          },
+          {
+            id: "w4n2-e2",
+            type: "multiple-choice",
+            questionHy: "31 ֆրանսերեն՝",
+            options: ["Trente-un", "Trente et un", "Trente un"],
+            correctAnswer: "Trente et un",
+            explanationHy: "1-ի դեպքում (բացի 11-ից)՝ «et», առանց գծիկի։",
+          },
+          {
+            id: "w4n2-e3",
+            type: "multiple-choice",
+            questionHy: "80 ֆրանսերեն՝",
+            options: ["Huitante", "Quatre-vingts", "Soixante-dix"],
+            correctAnswer: "Quatre-vingts",
+            explanationHy: "80 = quatre-vingts («չորս քսան»)։",
           },
         ]
       ),

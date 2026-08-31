@@ -15,6 +15,7 @@ import type { Level } from "@/lib/types";
 import { useRouter } from "next/navigation";
 import { playCompleteSound } from "@/lib/sounds";
 import { ConfettiBurst } from "@/components/ui/ConfettiBurst";
+import { NumberBlitzGame } from "@/components/exercises/NumberBlitzGame";
 
 export default function DayLessonPage({
   params,
@@ -26,8 +27,11 @@ export default function DayLessonPage({
   const level = (progress.level || "A1") as Level;
   const lesson = getDayLesson(level, day);
   const [exIndex, setExIndex] = useState(0);
-  const [phase, setPhase] = useState<"learn" | "practice" | "done">("learn");
+  const [phase, setPhase] = useState<"learn" | "practice" | "minigame" | "done">(
+    "learn"
+  );
   const [correctCount, setCorrectCount] = useState(0);
+  const [blitzScore, setBlitzScore] = useState(0);
   const router = useRouter();
 
   useEffect(() => {
@@ -74,13 +78,19 @@ export default function DayLessonPage({
   const exercises = lesson.exercises || [];
   const currentEx = exercises[exIndex];
   const completeKey = lesson.id || lesson.day;
+  const hasNumberBlitz = completeKey === "w4-num2";
 
-  const finish = () => {
+  const finish = (extraBlitz = 0) => {
     markDayComplete(completeKey);
-    addXp(25 + correctCount * 5);
+    addXp(25 + correctCount * 5 + extraBlitz * 3);
     updateSkill("vocabulary", 3);
     playCompleteSound();
     setPhase("done");
+  };
+
+  const goAfterPractice = () => {
+    if (hasNumberBlitz) setPhase("minigame");
+    else finish();
   };
 
   if (phase === "done") {
@@ -92,8 +102,13 @@ export default function DayLessonPage({
           <p className="text-[#062B56]/70 mt-2">
             Ճիշտ պատասխաններ՝ {correctCount}/{exercises.length || 0}
           </p>
+          {hasNumberBlitz && (
+            <p className="text-[#062B56]/70 mt-1">
+              Մինի խաղ՝ {blitzScore}/5
+            </p>
+          )}
           <p className="text-[#FD7035] font-bold mt-2">
-            +{25 + correctCount * 5} XP
+            +{25 + correctCount * 5 + blitzScore * 3} XP
           </p>
         </Card>
         <Link href="/learn">
@@ -101,6 +116,29 @@ export default function DayLessonPage({
             Վերադառնալ ամիս
           </Button>
         </Link>
+      </div>
+    );
+  }
+
+  if (phase === "minigame") {
+    return (
+      <div className="px-5 pt-5 pb-8 space-y-5">
+        <AppHeader />
+        <Link href="/learn" className="text-sm text-[#062B56]/50">
+          ← Վերադառնալ
+        </Link>
+        <div>
+          <h1 className="text-2xl font-extrabold text-[#062B56]">Մինի խաղ</h1>
+          <p className="text-[#062B56]/60 mt-1">
+            10 վայրկյան · ընտրե՛ք կամ գրե՛ք թիվը
+          </p>
+        </div>
+        <NumberBlitzGame
+          onDone={(s) => {
+            setBlitzScore(s);
+            finish(s);
+          }}
+        />
       </div>
     );
   }
@@ -152,7 +190,9 @@ export default function DayLessonPage({
               <p className="text-sm font-semibold text-[#062B56]/60 mb-1">
                 La règle
               </p>
-              <p className="text-[#062B56] leading-relaxed">{lesson.rule}</p>
+              <p className="text-[#062B56] leading-relaxed whitespace-pre-line">
+                {lesson.rule}
+              </p>
             </Card>
           )}
 
@@ -160,8 +200,10 @@ export default function DayLessonPage({
             className="w-full"
             size="lg"
             onClick={() => {
-              if (!exercises.length) finish();
-              else setPhase("practice");
+              if (!exercises.length) {
+                if (hasNumberBlitz) setPhase("minigame");
+                else finish();
+              } else setPhase("practice");
             }}
           >
             {exercises.length ? "Անցնել վարժություններին" : "Ավարտել"}
@@ -179,7 +221,7 @@ export default function DayLessonPage({
             exercise={currentEx}
             onComplete={(ok) => {
               if (ok) setCorrectCount((c) => c + 1);
-              if (exIndex + 1 >= exercises.length) finish();
+              if (exIndex + 1 >= exercises.length) goAfterPractice();
               else setExIndex((i) => i + 1);
             }}
           />

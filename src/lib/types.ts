@@ -82,6 +82,11 @@ export interface GrammarLesson {
     french: string;
     armenian: string;
   }[];
+  /** Words/phrases with listen buttons on the explain screen */
+  listenItems?: {
+    french: string;
+    armenian: string;
+  }[];
   tables?: {
     title: string;
     headers: string[];

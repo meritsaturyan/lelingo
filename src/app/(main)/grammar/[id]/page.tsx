@@ -4,7 +4,7 @@ import { Suspense, use, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { getGrammarById } from "@/data/grammar";
-import { AudioPlayer } from "@/components/ui/AudioPlayer";
+import { AudioPlayer, AudioIconButton } from "@/components/ui/AudioPlayer";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { GrammarExercise } from "@/components/exercises/GrammarExercise";
@@ -216,6 +216,23 @@ function GrammarInner({ id }: { id: string }) {
               {lesson.explanation}
             </p>
           </Card>
+
+          {lesson.listenItems && lesson.listenItems.length > 0 && (
+            <div className="space-y-2">
+              <h2 className="font-bold text-[#062B56]">Լսե՛ք դերանունները</h2>
+              <div className="grid grid-cols-2 gap-2">
+                {lesson.listenItems.map((item) => (
+                  <Card key={item.french} className="!p-3 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-xl font-extrabold text-[#062B56]">{item.french}</p>
+                      <p className="text-sm text-[#062B56]/60 truncate">{item.armenian}</p>
+                    </div>
+                    <AudioIconButton text={item.french} rate={0.85} />
+                  </Card>
+                ))}
+              </div>
+            </div>
+          )}
 
           <Card variant="accent">
             <p className="text-sm font-semibold text-[#062B56]/60 mb-1">Կանոն</p>
